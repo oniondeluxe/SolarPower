@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="BusinessObjects\" />
+    <ProjectReference Include="..\SolPwr.Core\SolPwr.Core.csproj" />
   </ItemGroup>
 
 </Project>

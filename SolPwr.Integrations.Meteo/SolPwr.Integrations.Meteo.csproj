@@ -8,11 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\SolPwr.DomainModel\SolPwr.DomainModel.csproj" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
