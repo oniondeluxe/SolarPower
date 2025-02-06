@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolPwr.Integrations.Meteo",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolPwr.Core", "SolPwr.Core\SolPwr.Core.csproj", "{02B98975-057A-49F8-9C6A-FFEF92D74DCB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolPwr.Application.Api", "SolPwr.Application.Api\SolPwr.Application.Api.csproj", "{FF73D0BA-7CCA-4F5F-B0CE-A910B2D2C06B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{02B98975-057A-49F8-9C6A-FFEF92D74DCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02B98975-057A-49F8-9C6A-FFEF92D74DCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02B98975-057A-49F8-9C6A-FFEF92D74DCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF73D0BA-7CCA-4F5F-B0CE-A910B2D2C06B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF73D0BA-7CCA-4F5F-B0CE-A910B2D2C06B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF73D0BA-7CCA-4F5F-B0CE-A910B2D2C06B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF73D0BA-7CCA-4F5F-B0CE-A910B2D2C06B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
