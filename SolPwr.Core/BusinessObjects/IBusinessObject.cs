@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace OnionDlx.SolPwr.BusinessObjects
 {
-    public class BusinessObject : IBusinessObject
+    public interface IBusinessObject
     {
-        public Guid Id { get; set; }
+        Guid Id { get; }
     }
 }

@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OnionDlx.SolPwr.BusinessObjects
+namespace OnionDlx.SolPwr.Dto
 {
-    public class BusinessObject : IBusinessObject
+    public class PowerPlant : IDataTransferObject
     {
-        public Guid Id { get; set; }
     }
 }

@@ -1,0 +1,16 @@
+USE [master]
+GO
+CREATE LOGIN [SolPwr] WITH PASSWORD=N'SolPwr', DEFAULT_DATABASE=[SolarPower], CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF
+GO
+USE [SolarPower]
+GO
+CREATE USER [SolPwr] FOR LOGIN [SolPwr]
+GO
+USE [SolarPower]
+GO
+ALTER ROLE [db_datareader] ADD MEMBER [SolPwr]
+GO
+USE [SolarPower]
+GO
+ALTER ROLE [db_datawriter] ADD MEMBER [SolPwr]
+GO
