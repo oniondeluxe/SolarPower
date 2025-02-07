@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace OnionDlx.SolPwr.Persistence
 {
-    public class UtilitiesContext : DbContext
+    internal class UtilitiesContext : DbContext
     {
         public DbSet<PowerPlant> PowerPlants { get; set; }
 
@@ -33,7 +33,7 @@ namespace OnionDlx.SolPwr.Persistence
 
         #endregion
 
-        public UtilitiesContext()
+        public UtilitiesContext(DbContextOptions options) : base(options)
         {
         }
     }
