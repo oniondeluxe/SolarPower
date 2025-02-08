@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OnionDlx.SolPwr.BusinessObjects
 {
-    public class PowerGenerationRecord
+    public class PowerGenerationRecord : BusinessObject
     {
         public PowerPlant PowerPlant { get; set; }
 

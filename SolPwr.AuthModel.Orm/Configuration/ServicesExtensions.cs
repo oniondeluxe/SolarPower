@@ -9,16 +9,16 @@ using System.Threading.Tasks;
 
 namespace OnionDlx.SolPwr.Configuration
 {
-    public static class ServicesDomainExtensions
+    public static class ServicesAuthExtensions
     {
         /// <summary>
         /// Will add the needed boilerplate to IoC, without the need to introduce a dependency to EF in the main app
         /// </summary>
         /// <param name="connString"></param>
         /// <returns></returns>
-        public static IServiceCollection AddPersistence(this IServiceCollection coll, string connString)
+        public static IServiceCollection AddAuthPersistence(this IServiceCollection coll, string connString)
         {
-            coll.AddDbContext<UtilitiesContext>(options => options.UseSqlServer(connString));
+            coll.AddDbContext<AuthIdentityContext>(options => options.UseSqlServer(connString));
             return coll;
         }
     }

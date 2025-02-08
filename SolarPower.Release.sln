@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolPwr.Application.Api", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolPwr.Protocols", "SolPwr.Protocols\SolPwr.Protocols.csproj", "{A537E408-859E-4AFD-AABE-E1C3AA317506}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolPwr.AuthModel.Orm", "SolPwr.AuthModel.Orm\SolPwr.AuthModel.Orm.csproj", "{712FF00B-D623-496F-9A8D-ACE851B081F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{A537E408-859E-4AFD-AABE-E1C3AA317506}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A537E408-859E-4AFD-AABE-E1C3AA317506}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A537E408-859E-4AFD-AABE-E1C3AA317506}.Release|Any CPU.Build.0 = Release|Any CPU
+		{712FF00B-D623-496F-9A8D-ACE851B081F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{712FF00B-D623-496F-9A8D-ACE851B081F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{712FF00B-D623-496F-9A8D-ACE851B081F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{712FF00B-D623-496F-9A8D-ACE851B081F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

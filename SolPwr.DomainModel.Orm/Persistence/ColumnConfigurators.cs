@@ -16,9 +16,13 @@ namespace OnionDlx.SolPwr.Persistence
         {
             builder.OwnsOne(p => p.Location, a =>
             {
-                a.Property(p => p.Latitude).HasColumnName("Latitude");
-                a.Property(p => p.Longitude).HasColumnName("Longitude");
+                // TODO: Check why the migration doesn't set these cols to NOT NULL
+                a.Property(p => p.Latitude).HasColumnName("Latitude").IsRequired();
+                a.Property(p => p.Longitude).HasColumnName("Longitude").IsRequired();
             });
+
+            builder.Property(p => p.UtcInstallDate).IsRequired();
+            builder.Property(p => p.PowerCapacity).IsRequired();
         }
 
         public PowerPlantConfiguration()

@@ -27,6 +27,8 @@ namespace OnionDlx.SolPwr.Persistence
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.HasDefaultSchema("spa");
+
             // PowerPlant geo data columns
             modelBuilder.ApplyConfiguration(new PowerPlantConfiguration());
         }
