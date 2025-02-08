@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SolPwr.AuthModel.Orm\SolPwr.AuthModel.Orm.csproj" />
+    <ProjectReference Include="..\SolPwr.AuthModel.Orm\SolPwr.AuthModel.csproj" />
     <ProjectReference Include="..\SolPwr.DomainModel.Orm\SolPwr.DomainModel.Orm.csproj" />
   </ItemGroup>
 

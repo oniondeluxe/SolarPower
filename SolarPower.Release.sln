@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolPwr.Application.Api", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolPwr.Protocols", "SolPwr.Protocols\SolPwr.Protocols.csproj", "{A537E408-859E-4AFD-AABE-E1C3AA317506}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolPwr.AuthModel.Orm", "SolPwr.AuthModel.Orm\SolPwr.AuthModel.Orm.csproj", "{712FF00B-D623-496F-9A8D-ACE851B081F8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolPwr.AuthModel", "SolPwr.AuthModel.Orm\SolPwr.AuthModel.csproj", "{712FF00B-D623-496F-9A8D-ACE851B081F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

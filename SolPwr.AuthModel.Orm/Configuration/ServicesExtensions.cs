@@ -26,6 +26,7 @@ namespace OnionDlx.SolPwr.Configuration
             coll.AddIdentity<IdentityUser, IdentityRole>(options =>
             {
                 options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 3;
             })
                 .AddEntityFrameworkStores<AuthIdentityContext>()
                 .AddDefaultTokenProviders();

@@ -17,9 +17,22 @@ namespace OnionDlx.SolPwr.Application.Controllers
 
 
         [HttpPost(Name = "RegisterAccount")]
-        public Task<IActionResult> RegisterAccount([FromBody] UserAccountRegistration dto)
+        public async Task<IActionResult> RegisterAccount([FromBody] UserAccountRegistration dto)
         {
-            return Task.FromResult<IActionResult>(Ok());
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var result = await _service.RegisterUserAsync(dto);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
         }
     }
 }
