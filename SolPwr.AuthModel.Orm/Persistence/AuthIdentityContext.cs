@@ -21,7 +21,7 @@ namespace OnionDlx.SolPwr.Persistence
 
         #endregion
 
-        public AuthIdentityContext(DbContextOptions options) : base(options)
+        public AuthIdentityContext(DbContextOptions<AuthIdentityContext> options) : base(options)
         {
         }
     }

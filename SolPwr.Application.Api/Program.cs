@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add our services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddPersistence(connectionString);
-builder.Services.AddAuthPersistence(connectionString);
+builder.Services.AddAuthServices(connectionString);
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

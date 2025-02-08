@@ -35,7 +35,7 @@ namespace OnionDlx.SolPwr.Persistence
 
         #endregion
 
-        public UtilitiesContext(DbContextOptions options) : base(options)
+        public UtilitiesContext(DbContextOptions<UtilitiesContext> options) : base(options)
         {
         }
     }
