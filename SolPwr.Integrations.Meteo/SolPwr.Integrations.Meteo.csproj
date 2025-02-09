@@ -22,4 +22,8 @@
     <ProjectReference Include="..\SolPwr.Protocols\SolPwr.Protocols.csproj" />
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="XCOPY /DY  C:\Dev\Uprise\SolarPower\SolPwr.Integrations.Meteo\bin\Debug\net9.0\SolPwr.Integrations.Meteo.dll C:\Dev\Uprise\SolarPower\SolPwr.Application.Api\bin\Debug\net9.0\." />
+  </Target>
+
 </Project>

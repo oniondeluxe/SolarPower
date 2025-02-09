@@ -22,13 +22,9 @@ namespace OnionDlx.SolPwr.Services
                 // Find the proper plugin/extension and load it
                 var chosenProvider = _configurationSection["Provider"];
 
-                var loader = new PluginLoader(_logger);
+                var loader = new PluginLoader(_logger, _configurationSection);
                 string message;
-                if (loader.TryLoadProvider(chosenProvider, _logger, out _endpoint, out message))
-                {
-
-                }
-                else
+                if (!loader.TryLoadProvider(chosenProvider, _logger, out _endpoint, out message))
                 {
                     _logger.LogError(message);
                 }
