@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using OnionDlx.SolPwr.Dto;
 using OnionDlx.SolPwr.Services;
+using SolPwr.Application.Api;
 
 namespace OnionDlx.SolPwr.Application.Controllers
 {
@@ -86,6 +87,43 @@ namespace OnionDlx.SolPwr.Application.Controllers
             {
                 return BadRequest(result);
             }
+        }
+
+
+        [HttpGet]
+        [Route("GetPowerData")]
+        public async Task<IEnumerable<PlantPowerData>> GetPowerData([FromQuery(Name = "id")] Guid identity,
+                                                                    [FromQuery(Name = "type")] int type,                    // History or forecast
+                                                                    [FromQuery(Name = "resolution")] int resolution,        // 15 | 60 minutes
+                                                                    [FromQuery(Name = "timespan")] int timeSpan,            // Number of units
+                                                                    [FromQuery(Name = "timespancode")] string timeSpanCode) // Kind of units [m | h | d]
+        {
+            PowerDataTypes typeEnum = (PowerDataTypes)type;
+            TimeResolution resol = TimeResolution.FifteenMinutes;
+            if (resolution == 60)
+            {
+                resol = TimeResolution.SixtyMinutes;
+            }
+            else if (resolution != 15)
+            {
+                return Array.Empty<PlantPowerData>();
+            }
+            var code = TimeSpanCode.None;
+            if (timeSpanCode == "m")
+            {
+                code = TimeSpanCode.Minutes;
+            }
+            else if (timeSpanCode == "h")
+            {
+                code = TimeSpanCode.Hours;
+            }
+            else if (timeSpanCode == "d")
+            {
+                code = TimeSpanCode.Days;
+            }
+
+            var result = await _service.GetPowerDataAsync(identity, typeEnum, resol, code, timeSpan);
+            return result;
         }
     }
 }

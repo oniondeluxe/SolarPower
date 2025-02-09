@@ -135,7 +135,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
         }
 
 
-        public Task<IEnumerable<PowerPlantImmutable>> GetForecastsAsync()
+        public Task<IEnumerable<PlantPowerData>> GetPowerDataAsync(Guid identity, PowerDataTypes type, TimeResolution resol, TimeSpanCode code, int timeSpan)
         {
             throw new NotImplementedException();
         }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,9 +10,7 @@ namespace OnionDlx.SolPwr.Services
 {
     public interface IPlantManagementService
     {
-        Task<IEnumerable<PowerPlantImmutable>> GetAllPlantsAsync();
-
-        Task<PlantMgmtResponse> SeedPlantsAsync(int daysBehind);
+        Task<IEnumerable<PowerPlantImmutable>> GetAllPlantsAsync();        
 
         Task<PlantMgmtResponse> CreatePlantAsync(PowerPlant dtoRegister);
 
@@ -19,6 +18,8 @@ namespace OnionDlx.SolPwr.Services
 
         Task<PlantMgmtResponse> DeletePlantAsync(Guid identity);
 
-        Task<IEnumerable<PowerPlantImmutable>> GetForecastsAsync();
+        Task<IEnumerable<PlantPowerData>> GetPowerDataAsync(Guid identity, PowerDataTypes type, TimeResolution resol, TimeSpanCode code, int timeSpan);
+
+        Task<PlantMgmtResponse> SeedPlantsAsync(int daysBehind);
     }
 }
