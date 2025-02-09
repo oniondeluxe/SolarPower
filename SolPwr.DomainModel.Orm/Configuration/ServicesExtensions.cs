@@ -16,33 +16,27 @@ namespace OnionDlx.SolPwr.Configuration
     {
         readonly string _connString;
 
-        public Task<PlantCrudResponse> CreatePlantAsync(PowerPlant dtoRegister)
+        public Task<PlantMgmtResponse> CreatePlantAsync(PowerPlant dtoRegister)
         {
-            return Task.FromResult(PlantCrudResponse.CreateSuccess("OK"));
+            return Task.FromResult(PlantMgmtResponse.CreateSuccess("OK"));
         }
 
 
-        public Task<PlantCrudResponse> UpdatePlantAsync(Guid identity, PowerPlant dtoRegister)
+        public Task<PlantMgmtResponse> UpdatePlantAsync(Guid identity, PowerPlant dtoRegister)
         {
-            return Task.FromResult(PlantCrudResponse.CreateSuccess("OK"));
+            return Task.FromResult(PlantMgmtResponse.CreateSuccess("OK"));
         }
 
 
-        public Task<PlantCrudResponse> DeletePlantAsync(Guid identity)
+        public Task<PlantMgmtResponse> DeletePlantAsync(Guid identity)
         {
-            return Task.FromResult(PlantCrudResponse.CreateSuccess("OK"));
+            return Task.FromResult(PlantMgmtResponse.CreateSuccess("OK"));
         }
 
 
-        public async Task<IEnumerable<PowerPlantImmutable>> GetAllPlants()
+        public async Task<IEnumerable<PowerPlantImmutable>> GetAllPlantsAsync()
         {
             var result = new List<PowerPlantImmutable>();
-            //{
-            //    new PowerPlant {  PlantName = "Plant 1", PowerCapacity = 1000, Location = new Data.GeoCoordinate(10.0, 20.0) },
-            //    new PowerPlant {  PlantName = "Plant 2", PowerCapacity = 2000, Location = new Data.GeoCoordinate(11.0, 21.0) },
-            //    new PowerPlant {  PlantName = "Plant 3", PowerCapacity = 3000, Location = new Data.GeoCoordinate(12.0, 22.0) },
-            //};
-
             using (var context = new UtilitiesContext(_connString))
             {
                 var result1 = await context.PowerPlants.ToListAsync();
@@ -60,7 +54,18 @@ namespace OnionDlx.SolPwr.Configuration
             }
 
             return result;
-            // return Task.FromResult(result.AsEnumerable());
+        }
+
+
+        public Task<PlantMgmtResponse> SeedPlantsAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public Task<IEnumerable<PowerPlantImmutable>> GetForecastsAsync()
+        {
+            throw new NotImplementedException();
         }
 
 

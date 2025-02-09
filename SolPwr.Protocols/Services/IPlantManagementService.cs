@@ -9,12 +9,16 @@ namespace OnionDlx.SolPwr.Services
 {
     public interface IPlantManagementService
     {
-        Task<IEnumerable<PowerPlantImmutable>> GetAllPlants();
+        Task<IEnumerable<PowerPlantImmutable>> GetAllPlantsAsync();
 
-        Task<PlantCrudResponse> CreatePlantAsync(PowerPlant dtoRegister);
+        Task<PlantMgmtResponse> SeedPlantsAsync();
 
-        Task<PlantCrudResponse> UpdatePlantAsync(Guid identity, PowerPlant dtoRegister);
+        Task<PlantMgmtResponse> CreatePlantAsync(PowerPlant dtoRegister);
 
-        Task<PlantCrudResponse> DeletePlantAsync(Guid identity);
+        Task<PlantMgmtResponse> UpdatePlantAsync(Guid identity, PowerPlant dtoRegister);
+
+        Task<PlantMgmtResponse> DeletePlantAsync(Guid identity);
+
+        Task<IEnumerable<PowerPlantImmutable>> GetForecastsAsync();
     }
 }

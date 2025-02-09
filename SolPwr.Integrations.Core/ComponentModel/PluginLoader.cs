@@ -33,13 +33,21 @@ namespace OnionDlx.SolPwr.ComponentModel
                     {
                         if (probe.PluginIdentifier == provider)
                         {
-                            var instance = Activator.CreateInstance(probe.PluginType) as IIntegrationEndpoint;
-                            if (instance != null)
+                            try
                             {
-                                // The logger here is different from the logger we used to bootstrap this very loader 
-                                instance.Initialize(logger, _configurationSection);
-                                endpoint = instance;
-                                return true;
+                                var instance = Activator.CreateInstance(probe.PluginType) as IIntegrationEndpoint;
+                                if (instance != null)
+                                {
+                                    // The logger here is different from the logger we used to bootstrap this very loader 
+                                    instance.Initialize(logger, _configurationSection);
+                                    endpoint = instance;
+                                    return true;
+                                }
+                            }
+                            catch (TargetInvocationException ex)
+                            {
+                                message = $"Error loading provider {provider}: {ex.InnerException.Message}";
+                                return false;
                             }
                         }
                     }

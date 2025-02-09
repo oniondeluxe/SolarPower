@@ -19,9 +19,9 @@ namespace OnionDlx.SolPwr.Application.Controllers
 
         [HttpGet]
         [Route("GetAllPlants")]
-        public async Task<IEnumerable<PowerPlant>> GetAllPlants()
+        public async Task<IEnumerable<PowerPlantImmutable>> GetAllPlants()
         {
-            var result = await _service.GetAllPlants();
+            var result = await _service.GetAllPlantsAsync();
             return result;
         }
 
@@ -49,14 +49,35 @@ namespace OnionDlx.SolPwr.Application.Controllers
 
         [HttpPut]
         [Route("DeletePlant")]
-        public async Task<IActionResult> DeletePlant([FromQuery(Name = "id")] Guid dto)
+        public async Task<IActionResult> DeletePlant([FromQuery(Name = "id")] Guid identity)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var result = await _service.DeletePlantAsync(dto);
+            var result = await _service.DeletePlantAsync(identity);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
+
+        [HttpPut]
+        [Route("UpdatePlant")]
+        public async Task<IActionResult> UpdatePlant([FromQuery(Name = "id")] Guid identity, [FromBody] PowerPlant plant)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var result = await _service.UpdatePlantAsync(identity, plant);
             if (result.Success)
             {
                 return Ok(result);

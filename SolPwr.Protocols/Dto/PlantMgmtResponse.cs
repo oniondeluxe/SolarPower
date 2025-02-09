@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OnionDlx.SolPwr.Dto
 {
-    public class PlantCrudResponse : IDataTransferObject
+    public class PlantMgmtResponse : IDataTransferObject
     {
         public Guid? Id { get; set; }
 
@@ -16,9 +16,9 @@ namespace OnionDlx.SolPwr.Dto
 
         public IEnumerable<(string, string)> ErrorInfo { get; set; }
 
-        public static PlantCrudResponse CreateSuccess(string message)
+        public static PlantMgmtResponse CreateSuccess(string message)
         {
-            return new PlantCrudResponse
+            return new PlantMgmtResponse
             {
                 Success = true,
                 Message = message
@@ -26,9 +26,9 @@ namespace OnionDlx.SolPwr.Dto
         }
 
 
-        public static PlantCrudResponse CreateFaulted(string message)
+        public static PlantMgmtResponse CreateFaulted(string message)
         {
-            return new PlantCrudResponse
+            return new PlantMgmtResponse
             {
                 Success = false,
                 Message = message
@@ -36,7 +36,7 @@ namespace OnionDlx.SolPwr.Dto
         }
 
 
-        public PlantCrudResponse()
+        public PlantMgmtResponse()
         {
             ErrorInfo = Array.Empty<(string, string)>();
         }

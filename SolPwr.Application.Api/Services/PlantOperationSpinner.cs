@@ -20,7 +20,7 @@ namespace OnionDlx.SolPwr.Application.Services
             try
             {
                 _integrationProxy.Initialize(cancellationToken);
-                _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(6));
+                _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(60));
             }
             catch (Exception ex)
             {
