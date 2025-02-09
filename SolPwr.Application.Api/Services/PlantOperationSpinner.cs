@@ -38,7 +38,7 @@ namespace OnionDlx.SolPwr.Application.Services
             _logger.LogInformation("Background task is running.");
 
             // By now, we have figured out which plugin to go to
-            _integrationProxy.GetEndpoint()?.Execute();
+            _integrationProxy.GetEndpoint()?.ExecuteAsync().Wait();
         }
 
 

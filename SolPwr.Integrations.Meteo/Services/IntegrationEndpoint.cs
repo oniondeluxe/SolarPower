@@ -35,8 +35,10 @@ namespace OnionDlx.SolPwr.Services
         }
 
 
-        public void Execute()
+        public Task ExecuteAsync()
         {
+
+            return Task.CompletedTask;
         }
     }
 }
