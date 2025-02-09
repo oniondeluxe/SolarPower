@@ -8,11 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
+    <Folder Include="ComponentModel\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SolPwr.Core\SolPwr.Core.csproj" />
+    <ProjectReference Include="..\SolPwr.Integrations.Core\SolPwr.Integrations.Core.csproj" />
     <ProjectReference Include="..\SolPwr.Protocols\SolPwr.Protocols.csproj" />
   </ItemGroup>
 

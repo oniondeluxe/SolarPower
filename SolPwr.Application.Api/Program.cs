@@ -8,12 +8,15 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddPersistence(connectionString);
 builder.Services.AddAuthServices(builder.Configuration, connectionString);
 
+// Add the integration to some meterological forecast service
+builder.Services.AddIntegrationExtensions(builder.Configuration.GetSection("MeteoService"));
+
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 // The spinner for meteo data download
-builder.Services.AddHostedService<ForecastListeningSpinner>();
+builder.Services.AddHostedService<PlantOperationSpinner>();
 
 var app = builder.Build();
 
