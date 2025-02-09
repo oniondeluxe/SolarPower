@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using OnionDlx.SolPwr.Configuration;
 using OnionDlx.SolPwr.Dto;
@@ -18,6 +19,7 @@ namespace OnionDlx.SolPwr.Services
     {
         readonly IConfiguration _config;
         readonly UserManager<IdentityUser> _userMgr;
+        readonly ResponseFactory<UserAuthService> _responses;
 
         public async Task<UserAuthResponse> RegisterUserAsync(UserAccountRegistration registration)
         {
@@ -28,7 +30,7 @@ namespace OnionDlx.SolPwr.Services
 
             if (registration.Password != registration.ConfirmPassword)
             {
-                return UserAuthResponse.CreateFaulted(Messages.ERR_PWD_MISMATCH);
+                return _responses.CreateFaulted(Messages.ERR_PWD_MISMATCH);
             }
 
             var userRecord = new IdentityUser
@@ -40,42 +42,31 @@ namespace OnionDlx.SolPwr.Services
             var result = await _userMgr.CreateAsync(userRecord, registration.Password);
             if (!result.Succeeded)
             {
-                var response = new UserAuthResponse
-                {
-                    Success = false,
-                    Message = result.Errors.FirstOrDefault()?.Description,
-                    ErrorInfo = from err in result.Errors select (err.Code, err.Description)
-                };
-                return response;
+                return _responses.CreateFaulted(result.Errors.FirstOrDefault()?.Description)
+                                 .WithIdentityErrors(result.Errors);
             }
 
-            return new UserAuthResponse
-            {
-                Success = true,
-                Message = Messages.MSG_ACCT_CREATED
-            };
+            return _responses.CreateSuccess(Messages.MSG_ACCT_CREATED);
         }
 
 
-        public async Task<UserAuthResponse> SignonUserAsync(UserSignonRecord registration)
+        public async Task<UserAuthResponse> SignonUserAsync(UserSignonRecord signon)
         {
-            var user = await _userMgr.FindByEmailAsync(registration.Email);
+            var user = await _userMgr.FindByEmailAsync(signon.Email);
             if (user == null)
             {
-                // TODO: Logging
-                return UserAuthResponse.CreateFaulted(Messages.ERR_SIGNON_FAIL);
+                return _responses.CreateFaulted(Messages.ERR_SIGNON_FAIL);
             }
 
-            var pwResult = await _userMgr.CheckPasswordAsync(user, registration.Password);
+            var pwResult = await _userMgr.CheckPasswordAsync(user, signon.Password);
             if (!pwResult)
             {
-                // TODO: Logging
-                return UserAuthResponse.CreateFaulted(Messages.ERR_SIGNON_FAIL);
+                return _responses.CreateFaulted(Messages.ERR_SIGNON_FAIL);
             }
 
             var claims = new[]
             {
-                new Claim("Email", user.Email),
+                new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
 
@@ -89,14 +80,16 @@ namespace OnionDlx.SolPwr.Services
             );
 
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-            return UserAuthResponse.CreateSuccess(tokenString);
+            return _responses.CreateSuccess(tokenString);
         }
 
 
-        public UserAuthService(UserManager<IdentityUser> userMgr, IConfiguration configuration)
+        public UserAuthService(UserManager<IdentityUser> userMgr, IConfiguration configuration, ILogger<UserAuthService> logger)
         {
             _userMgr = userMgr;
             _config = configuration;
+            // All responses will have logging guaranteed
+            _responses = new ResponseFactory<UserAuthService>(logger);
         }
     }
 }
