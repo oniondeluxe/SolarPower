@@ -17,6 +17,7 @@ namespace OnionDlx.SolPwr.Application.Services
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
+            return Task.CompletedTask;
             try
             {
                 _integrationProxy.Initialize(cancellationToken);

@@ -36,6 +36,13 @@ namespace OnionDlx.SolPwr.Dto
         }
 
 
+        public PlantMgmtResponse WithId(Guid id)
+        {
+            Id = id;
+            return this;
+        }
+
+
         public PlantMgmtResponse()
         {
             ErrorInfo = Array.Empty<(string, string)>();

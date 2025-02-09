@@ -11,7 +11,7 @@ namespace OnionDlx.SolPwr.Services
     {
         Task<IEnumerable<PowerPlantImmutable>> GetAllPlantsAsync();
 
-        Task<PlantMgmtResponse> SeedPlantsAsync();
+        Task<PlantMgmtResponse> SeedPlantsAsync(int daysBehind);
 
         Task<PlantMgmtResponse> CreatePlantAsync(PowerPlant dtoRegister);
 

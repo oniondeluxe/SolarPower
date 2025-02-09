@@ -11,14 +11,14 @@ namespace OnionDlx.SolPwr.Application.Controllers
 
         [HttpPost]
         [Route("SeedPlants")]
-        public async Task<IActionResult> SeedPlants()
+        public async Task<IActionResult> SeedPlants([FromQuery(Name = "quarters")] int quartersBehind)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var result = await _service.SeedPlantsAsync();
+            var result = await _service.SeedPlantsAsync(quartersBehind);
             if (result.Success)
             {
                 return Ok(result);

@@ -33,6 +33,9 @@ Separation of concerns was a driving factor for the component architecture, with
 
 The part which is handling the connectivity with a meterological service, is implemented using a plugin architecture. It means that the application can dynamically handle various meterolocial services, if so desired. The appsetting.json contains a section which will point out what provider should be used at runtime. An assembly scoped attribute is used to tag the DLL for plugin identification. Only one provider is implemented, though (www.open-meteo.com).
 
+## Logging
+
+
 ## Flaws and sources of improvements
 
 Some shortcuts have been taken to limit the scoped
