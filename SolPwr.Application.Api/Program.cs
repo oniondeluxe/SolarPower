@@ -1,3 +1,4 @@
+using OnionDlx.SolPwr.Application.Services;
 using OnionDlx.SolPwr.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,9 @@ builder.Services.AddAuthServices(builder.Configuration, connectionString);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// The spinner for meteo data download
+builder.Services.AddHostedService<ForecastListeningSpinner>();
 
 var app = builder.Build();
 
