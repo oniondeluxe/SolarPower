@@ -5,7 +5,7 @@ using OnionDlx.SolPwr.Services;
 namespace OnionDlx.SolPwr.Application.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("auth")]
     public class UserAuthController : Controller
     {
         readonly IUserAuthService _service;
@@ -17,6 +17,7 @@ namespace OnionDlx.SolPwr.Application.Controllers
 
 
         [HttpPost(Name = "RegisterAccount")]
+        [Route("register")]
         public async Task<IActionResult> RegisterAccount([FromBody] UserAccountRegistration dto)
         {
             if (!ModelState.IsValid)
@@ -25,6 +26,27 @@ namespace OnionDlx.SolPwr.Application.Controllers
             }
 
             var result = await _service.RegisterUserAsync(dto);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
+
+        [HttpPost(Name = "SignOn")]
+        [Route("signon")]
+        public async Task<IActionResult> SignonUser([FromBody] UserSignonRecord dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var result = await _service.SignonUserAsync(dto);
             if (result.Success)
             {
                 return Ok(result);
