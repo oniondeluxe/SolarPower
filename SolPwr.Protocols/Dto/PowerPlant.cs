@@ -22,4 +22,11 @@ namespace OnionDlx.SolPwr.Dto
         [Required]
         public double PowerCapacity { get; set; }
     }
+
+
+    public class PowerPlantImmutable : PowerPlant
+    {
+        [Required]
+        public Guid? Id { get; set; }        
+    }
 }

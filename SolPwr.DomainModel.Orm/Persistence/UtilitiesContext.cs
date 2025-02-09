@@ -11,6 +11,8 @@ namespace OnionDlx.SolPwr.Persistence
 {
     internal class UtilitiesContext : DbContext
     {
+        readonly string _connString;
+
         public DbSet<PowerPlant> PowerPlants { get; set; }
 
         public DbSet<PowerGenerationRecord> GenerationHistory { get; set; }
@@ -19,7 +21,12 @@ namespace OnionDlx.SolPwr.Persistence
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            base.OnConfiguring(optionsBuilder);
+            //base.OnConfiguring(optionsBuilder);
+
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer(_connString); // "Server=.;Database=SolarPower;User Id=SolPwr;Password=SolPwr;MultipleActiveResultSets=true;TrustServerCertificate=True");
+            }
         }
 
 
@@ -37,6 +44,12 @@ namespace OnionDlx.SolPwr.Persistence
 
         public UtilitiesContext(DbContextOptions<UtilitiesContext> options) : base(options)
         {
+        }
+
+
+        public UtilitiesContext(string connString)
+        {
+            _connString = connString;
         }
     }
 }

@@ -22,7 +22,7 @@ namespace OnionDlx.SolPwr.Application.Controllers
         public async Task<IEnumerable<PowerPlant>> GetAllPlants()
         {
             var result = await _service.GetAllPlants();
-            return result;         
+            return result;
         }
 
 
@@ -36,6 +36,27 @@ namespace OnionDlx.SolPwr.Application.Controllers
             }
 
             var result = await _service.CreatePlantAsync(dto);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
+
+        [HttpPut]
+        [Route("DeletePlant")]
+        public async Task<IActionResult> DeletePlant([FromQuery(Name = "id")] Guid dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var result = await _service.DeletePlantAsync(dto);
             if (result.Success)
             {
                 return Ok(result);

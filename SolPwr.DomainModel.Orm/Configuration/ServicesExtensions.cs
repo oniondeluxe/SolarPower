@@ -14,28 +14,64 @@ namespace OnionDlx.SolPwr.Configuration
     // TODO: Remove reference to Protocols again
     class TEMP_TEST : IPlantManagementService
     {
+        readonly string _connString;
+
         public Task<PlantCrudResponse> CreatePlantAsync(PowerPlant dtoRegister)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(PlantCrudResponse.CreateSuccess("OK"));
         }
 
-        public Task<IEnumerable<PowerPlant>> GetAllPlants()
+
+        public Task<PlantCrudResponse> UpdatePlantAsync(Guid identity, PowerPlant dtoRegister)
         {
-            var result = new List<PowerPlant>
+            return Task.FromResult(PlantCrudResponse.CreateSuccess("OK"));
+        }
+
+
+        public Task<PlantCrudResponse> DeletePlantAsync(Guid identity)
+        {
+            return Task.FromResult(PlantCrudResponse.CreateSuccess("OK"));
+        }
+
+
+        public async Task<IEnumerable<PowerPlantImmutable>> GetAllPlants()
+        {
+            var result = new List<PowerPlantImmutable>();
+            //{
+            //    new PowerPlant {  PlantName = "Plant 1", PowerCapacity = 1000, Location = new Data.GeoCoordinate(10.0, 20.0) },
+            //    new PowerPlant {  PlantName = "Plant 2", PowerCapacity = 2000, Location = new Data.GeoCoordinate(11.0, 21.0) },
+            //    new PowerPlant {  PlantName = "Plant 3", PowerCapacity = 3000, Location = new Data.GeoCoordinate(12.0, 22.0) },
+            //};
+
+            using (var context = new UtilitiesContext(_connString))
             {
-                new PowerPlant {  PlantName = "Plant 1", PowerCapacity = 1000, Location = new Data.GeoCoordinate(10.0, 20.0) },
-                new PowerPlant {  PlantName = "Plant 2", PowerCapacity = 2000, Location = new Data.GeoCoordinate(11.0, 21.0) },
-                new PowerPlant {  PlantName = "Plant 3", PowerCapacity = 3000, Location = new Data.GeoCoordinate(12.0, 22.0) },
-            };
+                var result1 = await context.PowerPlants.ToListAsync();
+                foreach (var dbRecord in result1)
+                {
+                    result.Add(new PowerPlantImmutable
+                    {
+                        Id = dbRecord.Id,
+                        UtcInstallDate = dbRecord.UtcInstallDate,
+                        PlantName = dbRecord.PlantName,
+                        PowerCapacity = dbRecord.PowerCapacity,
+                        Location = dbRecord.Location
+                    });
+                }
+            }
 
-            return Task.FromResult(result.AsEnumerable());
+            return result;
+            // return Task.FromResult(result.AsEnumerable());
         }
 
-        public TEMP_TEST()
-        {
 
+        public TEMP_TEST(string connString)
+        {
+            _connString = connString;
         }
     }
+
+
+
 
 
 
@@ -50,7 +86,8 @@ namespace OnionDlx.SolPwr.Configuration
         {
             coll.AddDbContext<UtilitiesContext>(options => options.UseSqlServer(connString));
 
-            coll.AddScoped<IPlantManagementService, TEMP_TEST>();
+            //coll.AddScoped<IPlantManagementService, TEMP_TEST>();
+            coll.AddScoped<IPlantManagementService>(c => new TEMP_TEST(connString));
 
             return coll;
         }

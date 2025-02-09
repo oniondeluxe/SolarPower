@@ -8,6 +8,8 @@ namespace OnionDlx.SolPwr.Dto
 {
     public class PlantCrudResponse : IDataTransferObject
     {
+        public Guid? Id { get; set; }
+
         public bool Success { get; set; }   
 
         public string Message { get; set; }
