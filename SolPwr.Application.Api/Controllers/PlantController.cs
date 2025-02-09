@@ -5,7 +5,7 @@ using OnionDlx.SolPwr.Services;
 
 namespace OnionDlx.SolPwr.Application.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api")]
     public class PlantController : Controller
     {

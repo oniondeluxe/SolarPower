@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\SolPwr.Core\SolPwr.Core.csproj" />
     <ProjectReference Include="..\SolPwr.DomainModel\SolPwr.DomainModel.csproj" />
+    <ProjectReference Include="..\SolPwr.Protocols\SolPwr.Protocols.csproj" />
   </ItemGroup>
 
   <ItemGroup>
