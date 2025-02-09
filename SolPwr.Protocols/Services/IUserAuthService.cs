@@ -9,6 +9,8 @@ namespace OnionDlx.SolPwr.Services
 {
     public interface IUserAuthService
     {
-        Task<UserAuthResponse> RegisterUserAsync(UserAccountRegistration registration);
+        Task<UserAuthResponse> RegisterUserAsync(UserAccountRegistration dtoRegister);
+
+        Task<UserAuthResponse> SignonUserAsync(UserSignonRecord dtoSignon);
     }
 }
