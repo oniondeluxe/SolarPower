@@ -99,6 +99,22 @@ Fill in the body according to this example:
 ```
 
 
+### Power queries
+> [!NOTE]
+> All power queries must be authorized with a JWT bearer token in the header.
+
+To retrieve power data, use the follwing **GET**:  
+
+`http://localhost:5132/api/GetPowerData?id={Plant ID}&type={Type Code}&resolution={Resolution Key}&timespan={Time Span Value}&timespancode={Time Span Type}`  
+
+The fields in the query string can have the follwoing values:  
+
+| Field | Values |
+| ------- | ------- |
+| `Plant ID` | The GUID id for the plant |
+| `Type Code` | 1 = History\ 2 = Prognosis |
+| `Resolution Key` | 15 = Every fifteen minutes\ 60 = Every hour |
+
 ## Component structure
 
 Separation of concerns was a driving factor for the component architecture, with the following characteristics:  
