@@ -82,18 +82,5 @@ namespace OnionDlx.SolPwr.Services
 
             yield break;
         }
-
-
-
-        //public MeteoData Convert()
-        //{
-        //    return new MeteoData
-        //    {
-        //        Location = new GeoCoordinate { Latitude = this.Latitude, Longitude = this.Longitude },
-        //        UtcTime = DateTime.UtcNow,
-        //        Visibility = 7000,//  this.HourlyValues.Visibility[0],
-        //        WeatherCode = 2 // this.HourlyValues.WeatherCode[0]
-        //    };
-        //}
     }
 }
