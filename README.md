@@ -11,12 +11,12 @@ The compilation of material serves two purposes:
 
 ## Getting started
 
-After cloning the material to a local disk, the following steps should be carried out:\
-1 Use a client connection to an MS SQL database (I used MS SQL Server Management Studio), and run the scripts in the folder: `$/SQL/DDL`\
+After cloning the material to a local disk, the following steps should be carried out:  
+1 Use a client connection to an MS SQL database (I used MS SQL Server Management Studio), and run the scripts in the folder: `$/SQL/DDL`  
 
-2 Open Visual Studio, and run the NuGet package manager console. Set the default project to `SolPwr.DomainModel.Orm`. Run `Update-Database`\
+2 Open Visual Studio, and run the NuGet package manager console. Set the default project to `SolPwr.DomainModel.Orm`. Run `Update-Database`  
 
-3 Still in the NuGet package manager console, switch the default project to `SolPwr.AuthModel`. Run `Update-Database`\
+3 Still in the NuGet package manager console, switch the default project to `SolPwr.AuthModel`. Run `Update-Database`  
 
 4 Now, the application can be fired up. 
 
@@ -32,8 +32,8 @@ The part which is handling the connectivity with a meterological service, is imp
 
 ## projects
 
-`SolPwr.Application.Api` | The main REST executable \ 
-`SolPwr.Core` | Contains base classes and various primitives
+|`SolPwr.Application.Api`|The main REST executable|
+|`SolPwr.Core`|Contains base classes and various primitives|
 
 
 ## Logging
@@ -57,7 +57,7 @@ An exampel: The namespace
 
 `OnionDlx.SolPwr.BusinessObjects`
 
-is used in both the projects `SolPwr.DomainModel` and `SolPwr.DomainModel.Orm? 
+is used in both the projects `SolPwr.DomainModel` and `SolPwr.DomainModel.Orm` 
 
 The purpose of this, is to keep a separation between the logical object orientaed abstractions inside the software stack, apart from the dependency and component hierarchy incarnated in the project files. These _can_ correlate incidentally, but not in general.
 
