@@ -91,8 +91,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
             return _uow.ExecuteQueryAsync<PowerPlantImmutable>(async context =>
             {
                 var result = new List<PowerPlantImmutable>();
-                var plants = await context.PowerPlants.ToListAsync();
-                foreach (var dbRecord in plants)
+                await foreach (var dbRecord in context.PowerPlants)
                 {
                     result.Add(new PowerPlantImmutable
                     {
