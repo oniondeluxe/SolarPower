@@ -14,9 +14,9 @@ The compilation of material serves two purposes:
 After cloning the material to a local disk, the following steps should be carried out:  
 1 Use a client connection to an MS SQL database (I used MS SQL Server Management Studio), and run the scripts in the folder: `$/SQL/DDL`  
 
-2 Open Visual Studio, and run the NuGet package manager console. Set the default project to `SolPwr.DomainModel.Orm`. Run `Update-Database`  
+2 Open Visual Studio, and run the NuGet package manager console. Set the default project to `SolPwr.DomainModel.Orm`. Run `Update-Database -context UtilitiesContext`  
 
-3 Still in the NuGet package manager console, switch the default project to `SolPwr.AuthModel`. Run `Update-Database`  
+3 Still in the NuGet package manager console, switch the default project to `SolPwr.AuthModel`. Run `Update-Database -context AuthDbContext`  
 
 4 Now, the application can be fired up. 
 
@@ -28,7 +28,9 @@ Separation of concerns was a driving factor for the component architecture, with
 3 The authentication and authorization part is separated from the rest of the application, and also with respect to backing storage. Two differect SQL schemes were used to keep track of that separation in the very database (`spu` and `spa`), instead of the commonly used `dbo`.  
 4 The part that concerns a dependency to a specific RDBMS is kept in the projects with suffixes Orm. In this case, there is a dependency to MsSql Server there, but not elsewhere.  
 
-The part which is handling the connectivity with a meterological service, is implemented using a plugin architecture. It means that the application can dynamically handle various meteorolocial services, if so desired. The `appsettings.json` contains a section which will point out what provider should be used at runtime. An assembly scoped attribute is used inside the plugin project to tag the DLL for plugin identification. Only one provider is implemented, though (www.open-meteo.com).
+The part which is handling the connectivity to a meterological service, is implemented using a plugin architecture. It means that the application can dynamically handle various meteorolocial services (one at a time), if so desired. The `appsettings.json` contains a section which will point out what provider should be used at runtime. An assembly scoped attribute is used inside the plugin project to tag the DLL for plugin identification. Only one provider is implemented, though (www.open-meteo.com).  
+
+Please note that the `MeteoService` configuration section has the value `open-meteo.com`. That is the name of the plugin identifier, and has nothing to do with the URL to that very meteo service. In fact, any name could have been used there.
 
 ## VS Projects
 
@@ -36,6 +38,12 @@ The part which is handling the connectivity with a meterological service, is imp
 | ------- | ------- |
 | `SolPwr.Application.Api` | The main REST executable |
 | `SolPwr.Core` | Contains base classes and various primitives |
+| `SolPwr.DomainModel` | Domain classes for code first |
+| `SolPwr.DomainModel.Orm` | The Entity Framework implementation |
+| `SolPwr.AuthModel` | The identity implementation using JWT |
+| `SolPwr.Integrations.Core` | Generic loading and management of any meterological extension |
+| `SolPwr.Integrations.Meteo` | Specific provider implementation for the selected service |
+| `SolPwr.Protocols` | Service contracts and DTOs |
 
 
 ## Logging
