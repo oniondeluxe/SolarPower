@@ -11,6 +11,8 @@ namespace OnionDlx.SolPwr.Services
     public interface IMeteoLookupService
     {
         Task<IEnumerable<MeteoData>> GetMeteoDataAsync(GeoCoordinate geoCoordinate, TimeResolution resol, TimeSpanCode code, int timeSpan);
+
+        Task StartFeedAsync(Guid plantId, GeoCoordinate location);
     }
 
 

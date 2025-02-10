@@ -19,10 +19,9 @@ namespace OnionDlx.SolPwr.Services
         public double GetCurrentPower(int weatherCode, double visibility)
         {
             // Fake science is applied here. Elon Musk will know for sure
-
             if (weatherCode > 3)
             {
-                // Cloudy - no sun
+                // Cloudy - need to switch on the nuclear power instead
                 return 0.0;
             }
 
@@ -32,6 +31,7 @@ namespace OnionDlx.SolPwr.Services
                 currentVisibility = visibility;
             }
 
+            // Full sun blast at the Equator, zero at the North Pole
             return _nominalPowerCapacity * (currentVisibility / VISIBILITY_THRESHOLD) * ((90.0 - _latitude) / 90.0);
         }
 

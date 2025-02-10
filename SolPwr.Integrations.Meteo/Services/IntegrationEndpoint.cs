@@ -85,6 +85,13 @@ namespace OnionDlx.SolPwr.Services
         }
 
 
+        public Task StartFeedAsync(Guid plantId, GeoCoordinate location)
+        {
+            // TODO: make sure we create production data on a regular basis
+            return Task.CompletedTask;
+        }
+
+
         public async Task<IEnumerable<MeteoData>> GetMeteoDataAsync(GeoCoordinate geoCoordinate, TimeResolution resol, TimeSpanCode code, int timeSpan)
         {
             // The API will always deliver for minimum one day

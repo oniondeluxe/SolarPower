@@ -20,12 +20,12 @@ namespace OnionDlx.SolPwr.BusinessLogic
         readonly ContextUoW _uow;
         readonly string _connString;
         readonly ILogger<IPlantManagementService> _logger;
-        readonly IMeteoLookupServiceCallback _factory;
+        readonly IMeteoLookupServiceCallback _meteoCallback;
 
         public async Task<PlantMgmtResponse> CreatePlantAsync(PowerPlant dtoRegister)
         {
             // Bump the database
-            return await _uow.ExecuteCommandWithId(context =>
+            var plantId = await _uow.ExecuteCommandWithId(context =>
             {
                 var plant = new BusinessObjects.PowerPlant
                 {
@@ -40,8 +40,10 @@ namespace OnionDlx.SolPwr.BusinessLogic
                 return plant.Id;
             });
 
-            // TODO
-            // Make sure we start seeding power data in the worker thread
+            // Make sure we start feeding power data in the worker thread
+            await _meteoCallback.GetEndpoint()?.StartFeedAsync(plantId.Id.Value, dtoRegister.Location);
+
+            return plantId;
         }
 
 
@@ -111,7 +113,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
             var now = DateTime.UtcNow;
             var tempStorage = new List<(Guid, IList<MeteoData>)>();
             using (var context = new UtilitiesContext(_connString))
-            {              
+            {
                 // Go through all plants and find their location etc
                 var plants = from p in context.PowerPlants select p;
                 foreach (var plant in plants)
@@ -203,7 +205,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
             else if (type == PowerDataTypes.Forecast)
             {
                 // Forecast, we ask the meteo service
-                var meteo = _factory.GetEndpoint();
+                var meteo = _meteoCallback.GetEndpoint();
 
                 // Find the plant in question first
                 using (var context = new UtilitiesContext(_connString))
@@ -248,8 +250,8 @@ namespace OnionDlx.SolPwr.BusinessLogic
             _uow = new ContextUoW(logger, connString);
 
             // Subscribe to events coming from the outer worker
-            _factory = factory;
-            _factory.ServicePushUpdate += (sender, service) =>
+            _meteoCallback = factory;
+            _meteoCallback.ServicePushUpdate += (sender, service) =>
             {
                 // The background worker will invoke this, but WE have to take care if it, using the 
                 // caller, to ask for data from the Internet
