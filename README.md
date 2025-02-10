@@ -20,6 +20,34 @@ After cloning the material to a local disk, the following steps should be carrie
 
 4 Now, the application can be fired up. 
 
+## Using the API
+
+### Authorize
+Create at least one user account with the **POST** call:
+
+`http://localhost:5132/auth/register`  
+
+Fill in the body according to this example:  
+```
+{
+    "Email":"a.b@com",
+    "Password":"X.x1",
+    "ConfirmPassword":"X.x1"
+}
+```
+
+To retrieve a JWT token, user can now authenticate with **POST**:
+
+`http://localhost:5132/auth/signon`  
+
+Fill in the body:  
+```
+{
+    "Email":"a.b@com",
+    "Password":"X.x1",
+}
+```
+
 ## Component structure
 
 Separation of concerns was a driving factor for the component architecture, with the following characteristics:  

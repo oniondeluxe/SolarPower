@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OnionDlx.SolPwr.Dto;
 using OnionDlx.SolPwr.Services;
-using SolPwr.Application.Api.Controllers;
 
 namespace OnionDlx.SolPwr.Application.Controllers
 {
