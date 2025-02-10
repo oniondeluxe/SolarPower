@@ -65,10 +65,10 @@ namespace OnionDlx.SolPwr.Services
         }
 
 
-        private async Task<IEnumerable<MeteoData>> FetchDataAsync(double latitude, double longitude, int dayLapse)
+        private async Task<IEnumerable<MeteoData>> FetchDataAsync(GeoCoordinate geoCoordinate, TimeResolution resol, TimeSpanCode code, int dayLapse)
         {
             var result = new List<MeteoData>();
-            var url = $"https://api.open-meteo.com/v1/forecast?latitude={latitude}&longitude={longitude}&hourly=weather_code,visibility&forecast_days={dayLapse}";
+            var url = $"https://api.open-meteo.com/v1/forecast?latitude={geoCoordinate.Latitude}&longitude={geoCoordinate.Longitude}&hourly=weather_code,visibility&forecast_days={dayLapse}";
 
             // Go to the meteo service
             using (var client = new HttpClient())
@@ -76,9 +76,9 @@ namespace OnionDlx.SolPwr.Services
                 var response = await client.GetAsync(url);
                 var data = await response.Content.ReadAsStringAsync();
                 var instances = JsonSerializer.Deserialize<List<ProviderMeteoData>>(data);
-                
+
                 // Re-packaging into the public format
-                result.AddRange(instances.Convert());
+                result.AddRange(instances.Convert(resol, geoCoordinate));
             }
 
             return result.AsEnumerable();
@@ -87,14 +87,37 @@ namespace OnionDlx.SolPwr.Services
 
         public async Task<IEnumerable<MeteoData>> GetMeteoDataAsync(GeoCoordinate geoCoordinate, TimeResolution resol, TimeSpanCode code, int timeSpan)
         {
-           // var result = new List<MeteoData>();
-            var records = await FetchDataAsync(geoCoordinate.Latitude, geoCoordinate.Longitude, 3);
+            // The API will always deliver for minimum one day
+            var numDays = 1;
+            if (code == TimeSpanCode.Minutes)
+            {
+                // How many days will these minutes be?
+                var numPerDay = 24 * 60;
+                numDays = timeSpan / numPerDay;
+                if (numDays < 1)
+                {
+                    numDays = 1;
+                }
+            }
+            else if (code == TimeSpanCode.Hours)
+            {
+                // How many days will these hours be?
+                var numPerDay = 24;
+                numDays = timeSpan / numPerDay;
+                if (numDays < 1)
+                {
+                    numDays = 1;
+                }
+            }
+            else if (code == TimeSpanCode.Days)
+            {
+                if (timeSpan > 1)
+                {
+                    numDays = timeSpan;
+                }
+            }
 
-            //result.Add(new MeteoData { Location = geoCoordinate, Visibility = 9000, WeatherCode = 3 });
-            //result.Add(new MeteoData { Location = geoCoordinate, Visibility = 3000, WeatherCode = 5 });
-            //result.Add(new MeteoData { Location = geoCoordinate, Visibility = 3000, WeatherCode = 1 });
-
-            return records;
+            return await FetchDataAsync(geoCoordinate, resol, code, numDays);
         }
     }
 }

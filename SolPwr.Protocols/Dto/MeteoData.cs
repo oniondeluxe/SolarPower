@@ -13,7 +13,7 @@ namespace OnionDlx.SolPwr.Dto
 
         public DateTime UtcTime { get; set; }
 
-        public int Visibility { get; set; }
+        public double Visibility { get; set; }
 
         public int WeatherCode { get; set; }
 

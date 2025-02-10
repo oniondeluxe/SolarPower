@@ -11,27 +11,28 @@ namespace OnionDlx.SolPwr.Services
     /// </summary>
     internal class PowerCalculator
     {
+        public const double VISIBILITY_THRESHOLD = 50000.0;
+
         readonly double _nominalPowerCapacity;
         readonly double _latitude;
 
-
-        public double GetCurrentPower(int weatherCode, int visibility)
+        public double GetCurrentPower(int weatherCode, double visibility)
         {
             // Fake science is applied here. Elon Musk will know for sure
 
-            if(weatherCode > 3)
+            if (weatherCode > 3)
             {
                 // Cloudy - no sun
                 return 0.0;
-            }                       
-
-            var currentVisibiltiy = 10000;
-            if(visibility < currentVisibiltiy)
-            {
-                currentVisibiltiy = visibility;
             }
 
-            return _nominalPowerCapacity * (currentVisibiltiy / 10000.0) * ((90.0 - _latitude) / 90.0);
+            var currentVisibility = VISIBILITY_THRESHOLD;
+            if (visibility < currentVisibility)
+            {
+                currentVisibility = visibility;
+            }
+
+            return _nominalPowerCapacity * (currentVisibility / VISIBILITY_THRESHOLD) * ((90.0 - _latitude) / 90.0);
         }
 
 
