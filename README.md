@@ -98,7 +98,6 @@ Fill in the body according to this example:
 }
 ```
 
-
 ### Power queries
 > [!NOTE]
 > All power queries must be authorized with a JWT bearer token in the header.
@@ -107,15 +106,22 @@ To retrieve power data, use the follwing **GET**:
 
 `http://localhost:5132/api/GetPowerData?id={Plant ID}&type={Type Code}&resolution={Resolution Key}&timespan={Time Span Value}&timespancode={Time Span Type}`  
 
-The fields in the query string can have the follwoing values:  
+The fields in the query string can have the following values:  
 
 | Field | Values |
 | ------- | ------- |
 | `Plant ID` | The GUID id for the plant |
 | `Type Code` | 1 = History<br/> 2 = Prognosis |
-| `Resolution Key` | 15 = Every fifteen minutes\ 60 = Every hour |
+| `Resolution Key` | 15 = Every fifteen minutes<br/> 60 = Every hour |
 | `Time Span Value` | The quantity of the desired time, according to its units |
 | `Time Span Type` | ['d' \| 'h' \| 'm'] |
+
+### Seeding
+
+For test purposes, existing plants can be seeded back in time with random data, using this **POST**:  
+
+`http://localhost:5132/tools/SeedPlants?quarters={Num fifteen minute intervals}`  
+
 
 ## Component structure
 
@@ -153,7 +159,8 @@ Some shortcuts have been taken to limit the scope, and to stay on focus
 1 The project `SolPwr.DomainModel.Orm` has two areas of responsibility, and thus has a dependency to both the Domain model and the Dto model. A better approach would have been to put a separate implementation in a different projects and use a pattern to support Entity Framework. For instance repository and/or unit of work.  
 2 The Tools controller and seeding API is not authorized, for testing convenience, but could be very easily.  
 3 The instantatation of the `IntegrationEndpoint` and the plugin loader with the `IBackgroundWorker`pattern, might be a bit inside-out. Could be refactored to become more straightforward. But, as this is beoynd the programming task anyway, I'll leave it like that.  
-4 And, of course the obvious - no test projects are included.
+4 When asking for 15 min data points, some interpolation needs to take place. This is not implemented.  
+5 And, of course the obvious - no test projects are included.  
 
 ## Taxonomy
 
