@@ -48,6 +48,35 @@ Fill in the body:
 }
 ```
 
+### CRUD Operations
+> [!NOTE]
+> All CRUD operations must be authorized with a JWT bearer token in the header.
+
+To select all power plants, call this **GET**  
+`http://localhost:5132/api/GetAllPlants`  
+
+To create a new plant, use this **POST**  
+
+`http://localhost:5132/api/CreatePlant`  
+
+Fill in the body according to this example:  
+```
+{
+    "id": "F530A983-3DAA-44B7-8AFC-74A5994967F6",
+    "plantName": "Plant API",
+    "utcInstallDate": "2025-02-09T09:40:00",
+    "location": {
+        "latitude": 10,
+        "longitude": 20
+    },
+    "powerCapacity": 400
+}
+```
+
+To delete an existing plant, and all its related power history. Use the following **PUT**:  
+`http://localhost:5132/api/DeletePlant?id={Plant ID}`  
+where `Plant ID` is the GUID value of the plant in question
+
 ## Component structure
 
 Separation of concerns was a driving factor for the component architecture, with the following characteristics:  
