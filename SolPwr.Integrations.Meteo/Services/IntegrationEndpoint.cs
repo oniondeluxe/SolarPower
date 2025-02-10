@@ -65,8 +65,9 @@ namespace OnionDlx.SolPwr.Services
         }
 
 
-        public async Task<MeteoData> FetchDataAsync(double latitude, double longitude, int dayLapse)
+        private async Task<IEnumerable<MeteoData>> FetchDataAsync(double latitude, double longitude, int dayLapse)
         {
+            var result = new List<MeteoData>();
             var url = $"https://api.open-meteo.com/v1/forecast?latitude={latitude}&longitude={longitude}&hourly=weather_code,visibility&forecast_days={dayLapse}";
 
             // Go to the meteo service
@@ -74,26 +75,26 @@ namespace OnionDlx.SolPwr.Services
             {
                 var response = await client.GetAsync(url);
                 var data = await response.Content.ReadAsStringAsync();
-                var instance = JsonSerializer.Deserialize<List<ProviderMeteoData>>(data);
+                var instances = JsonSerializer.Deserialize<List<ProviderMeteoData>>(data);
+                
+                // Re-packaging into the public format
+                result.AddRange(instances.Convert());
             }
 
-            // Weather code
-
-            // Visibility
-
-            // Latitude
-            return null;
+            return result.AsEnumerable();
         }
 
 
-        public Task<IEnumerable<MeteoData>> GetMeteoDataAsync(GeoCoordinate geoCoordinate, DateTime time)
+        public async Task<IEnumerable<MeteoData>> GetMeteoDataAsync(GeoCoordinate geoCoordinate, TimeResolution resol, TimeSpanCode code, int timeSpan)
         {
-            var result = new List<MeteoData>();
-            result.Add(new MeteoData { Location = geoCoordinate, Visibility = 9000, WeatherCode = 3 });
-            result.Add(new MeteoData { Location = geoCoordinate, Visibility = 3000, WeatherCode = 5 });
-            result.Add(new MeteoData { Location = geoCoordinate, Visibility = 3000, WeatherCode = 1 });
+           // var result = new List<MeteoData>();
+            var records = await FetchDataAsync(geoCoordinate.Latitude, geoCoordinate.Longitude, 3);
 
-            return Task.FromResult(result.AsEnumerable());
+            //result.Add(new MeteoData { Location = geoCoordinate, Visibility = 9000, WeatherCode = 3 });
+            //result.Add(new MeteoData { Location = geoCoordinate, Visibility = 3000, WeatherCode = 5 });
+            //result.Add(new MeteoData { Location = geoCoordinate, Visibility = 3000, WeatherCode = 1 });
+
+            return records;
         }
     }
 }

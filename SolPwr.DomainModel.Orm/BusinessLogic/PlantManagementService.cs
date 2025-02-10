@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using OnionDlx.SolPwr.Data;
 using OnionDlx.SolPwr.Dto;
 using OnionDlx.SolPwr.Persistence;
 using OnionDlx.SolPwr.Services;
@@ -116,7 +117,8 @@ namespace OnionDlx.SolPwr.BusinessLogic
                 foreach (var plant in plants)
                 {
                     var mdList = new List<MeteoData>();
-                    var data = meteo.GetMeteoDataAsync(plant.Location, now).Result;
+                    // Zero values means now
+                    var data = meteo.GetMeteoDataAsync(plant.Location, TimeResolution.None, TimeSpanCode.None, 0).Result;
                     mdList.AddRange(data);
                     tempStorage.Add((plant.Id, mdList));
                 }
@@ -216,7 +218,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
 
                         // Fake science - The latitude will influence how much power the sun will generate
                         var now = DateTime.UtcNow;
-                        var data = await meteo.GetMeteoDataAsync(currentPlant.Location, now);
+                        var data = await meteo.GetMeteoDataAsync(currentPlant.Location, resol, code, timeSpan);
                         foreach (var dp in data)
                         {
                             var calc = new PowerCalculator(currentPlant.PowerCapacity, currentPlant.Location.Latitude);

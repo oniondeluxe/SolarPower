@@ -7,33 +7,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace OnionDlx.SolPwr.Dto
-{
-    [Flags]
-    public enum PowerDataTypes : uint
-    {
-        None = 0,
-        History = 1,
-        Forecast = 2
-    }
-
-
-    public enum TimeResolution
-    {
-        None,
-        FifteenMinutes,
-        SixtyMinutes
-    }
-
-
-    public enum TimeSpanCode
-    {
-        None,
-        Minutes,
-        Hours,
-        Days
-    }
-
-
+{ 
     public class PlantPowerData : IDataTransferObject
     {
         [JsonPropertyName("plant")]

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OnionDlx.SolPwr.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -72,6 +73,7 @@ namespace OnionDlx.SolPwr.Dto
 
         [JsonPropertyName("hourly")]
         public ValueDescriptor HourlyValues { get; set; }
+
 
         public ProviderMeteoData()
         {

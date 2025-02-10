@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OnionDlx.SolPwr.Data;
 using OnionDlx.SolPwr.Dto;
 using OnionDlx.SolPwr.Services;
 using SolPwr.Application.Api;
