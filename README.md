@@ -74,8 +74,13 @@ Fill in the body according to this example:
 ```
 
 To delete an existing plant, and all its related power history. Use the following **PUT**:  
+
 `http://localhost:5132/api/DeletePlant?id={Plant ID}`  
-where `Plant ID` is the GUID value of the plant in question
+
+where `Plant ID` is the GUID value of the plant in question. Example: 
+
+`http://localhost:5132/api/DeletePlant?id=9C8D7E47-5F83-4BE8-B323-D9D2F1439FD0`  
+
 
 ## Component structure
 
