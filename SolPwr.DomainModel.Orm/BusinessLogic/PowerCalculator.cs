@@ -15,7 +15,7 @@ namespace OnionDlx.SolPwr.Services
         readonly double _latitude;
 
 
-        public double GetCurrentPower(string weatherCode, string visibility)
+        public double GetCurrentPower(int weatherCode, int visibility)
         {
             return 0.0;
         }

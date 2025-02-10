@@ -20,6 +20,23 @@ namespace OnionDlx.SolPwr.BusinessLogic
         readonly string _connString;
 
 
+        public async Task<IEnumerable<T>> ExecuteQueryAsync<T>(Func<UtilitiesContext, Task<IEnumerable<T>>> onExecute)
+        {
+            try
+            {
+                using (var context = new UtilitiesContext(_connString))
+                {
+                    return await onExecute(context);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return Array.Empty<T>();
+            }
+        }
+
+
         public async Task<PlantMgmtResponse> ExecuteCommandWithId(Func<UtilitiesContext, Guid?> onExecute)
         {
             try

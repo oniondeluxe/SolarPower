@@ -5,7 +5,9 @@ using OnionDlx.SolPwr.Persistence;
 using OnionDlx.SolPwr.Services;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
@@ -81,11 +83,11 @@ namespace OnionDlx.SolPwr.BusinessLogic
         }
 
 
-        public async Task<IEnumerable<PowerPlantImmutable>> GetAllPlantsAsync()
+        public Task<IEnumerable<PowerPlantImmutable>> GetAllPlantsAsync()
         {
-            var result = new List<PowerPlantImmutable>();
-            using (var context = new UtilitiesContext(_connString))
+            return _uow.ExecuteQueryAsync<PowerPlantImmutable>(async context =>
             {
+                var result = new List<PowerPlantImmutable>();
                 var plants = await context.PowerPlants.ToListAsync();
                 foreach (var dbRecord in plants)
                 {
@@ -98,16 +100,14 @@ namespace OnionDlx.SolPwr.BusinessLogic
                         Location = dbRecord.Location
                     });
                 }
-            }
-
-            return result;
+                return result;
+            });
         }
 
 
         private void OnUpdateProductionData(IMeteoLookupService endpoint)
         {
         }
-
 
 
         public async Task<PlantMgmtResponse> SeedPlantsAsync(int quartersBehind)
@@ -144,24 +144,83 @@ namespace OnionDlx.SolPwr.BusinessLogic
 
         public async Task<IEnumerable<PlantPowerData>> GetPowerDataAsync(Guid identity, PowerDataTypes type, TimeResolution resol, TimeSpanCode code, int timeSpan)
         {
-            var meteo = _factory.GetEndpoint();
-            using (var context = new UtilitiesContext(_connString))
+            // History: we read from the stored data
+            if (type == PowerDataTypes.History)
             {
-                var plants = await context.PowerPlants.ToListAsync();
-                foreach (var plant in plants)
+                return await _uow.ExecuteQueryAsync<PlantPowerData>(async context =>
                 {
-                    var data = await meteo.GetMeteoDataAsync(plant.Location, DateTime.UtcNow);
-                }                
-            }            
+                    // We don't include the history records in the query yet
+                    var plants = from p in context.PowerPlants
+                                 where p.Id == identity
+                                 select p;
+                    var currentPlant = await plants.FirstOrDefaultAsync();
+                    if (currentPlant != null)
+                    {
+                        var result = new List<PlantPowerData>();
+                        var history = from hist in context.GenerationHistory
+                                      where hist.PowerPlant.Id == currentPlant.Id
+                                      select hist;
+                        foreach (var histItem in await history.ToListAsync())
+                        {
+                            result.Add(new PlantPowerData
+                            {
+                                PlantId = currentPlant.Id,
+                                CurrentPower = histItem.PowerGenerated,
+                                UtcTime = histItem.UtcTimestamp
+                            });
+                        }
 
-            return null;
+                        return result;
+                    }
+                    else
+                    {
+                        return Array.Empty<PlantPowerData>();
+                    }
+                });
+            }
+            else if (type == PowerDataTypes.Forecast)
+            {
+                var meteo = _factory.GetEndpoint();
+
+                // Find the plant in question first
+                using (var context = new UtilitiesContext(_connString))
+                {
+                    var plants = from p in context.PowerPlants
+                                 where p.Id == identity
+                                 select p;
+                    var currentPlant = await plants.FirstOrDefaultAsync();
+                    if (currentPlant != null)
+                    {
+                        var result = new List<PlantPowerData>();
+
+                        // Fake science - The latitude will influence how much power the sun will generate
+                        var now = DateTime.UtcNow;
+                        var data = await meteo.GetMeteoDataAsync(currentPlant.Location, now);
+                        var calc = new PowerCalculator(currentPlant.PowerCapacity, currentPlant.Location.Latitude);
+                        var power = calc.GetCurrentPower(data.WeatherCode, data.Visibility);
+                        result.Add(new PlantPowerData
+                        {
+                            PlantId = currentPlant.Id,
+                            CurrentPower = power,
+                            UtcTime = now
+                        });
+
+                        return result;
+                    }
+                }
+
+                return Array.Empty<PlantPowerData>();
+            }
+
+            // Nothing ordered, or nothing found
+            return Array.Empty<PlantPowerData>();
         }
 
 
         public PlantManagementService(string connString, ILogger<IPlantManagementService> logger, IMeteoLookupServiceCallback factory)
         {
             _connString = connString;
-            _logger = logger;            
+            _logger = logger;
             _uow = new ContextUoW(logger, connString);
 
             // Subscribe to events coming from the outer worker
