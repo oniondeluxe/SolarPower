@@ -30,10 +30,12 @@ Separation of concerns was a driving factor for the component architecture, with
 
 The part which is handling the connectivity with a meterological service, is implemented using a plugin architecture. It means that the application can dynamically handle various meteorolocial services, if so desired. The `appsetting.json` contains a section which will point out what provider should be used at runtime. An assembly scoped attribute is used inside the plugin project to tag the DLL for plugin identification. Only one provider is implemented, though (www.open-meteo.com).
 
-## projects
+## VS Projects
 
-|`SolPwr.Application.Api`|The main REST executable|
-|`SolPwr.Core`|Contains base classes and various primitives|
+| Project | Purpose |
+| ------- | ------- |
+| `SolPwr.Application.Api` | The main REST executable |
+| `SolPwr.Core` | Contains base classes and various primitives |
 
 
 ## Logging
@@ -42,7 +44,7 @@ Logging is not covered everywhere an on every leve, but more like to illustrate 
 
 ## Flaws and sources of improvements
 
-Some shortcuts have been taken to limit the scope, and to stay on focus
+Some shortcuts have been taken to limit the scope, and to stay on focus  
 1 The project `SolPwr.DomainModel.Orm` has two areas of responsibility, and thus has a dependency to both the Domain model and the Dto model. A better approach would have been to put a separate implementation in a different projects and use a pattern to support Entity Framework. For instance repository and/or unit of work.
 
 ## Taxonomy
