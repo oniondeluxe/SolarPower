@@ -50,10 +50,12 @@ Please note that the `MeteoService` configuration section has the value `open-me
 
 Logging is not covered everywhere or on every level, but more like to illustrate some useful patterns.
 
-## Flaws and sources of improvements
+## Flaws, sources of improvements and other remarks
 
 Some shortcuts have been taken to limit the scope, and to stay on focus  
-1 The project `SolPwr.DomainModel.Orm` has two areas of responsibility, and thus has a dependency to both the Domain model and the Dto model. A better approach would have been to put a separate implementation in a different projects and use a pattern to support Entity Framework. For instance repository and/or unit of work.
+1 The project `SolPwr.DomainModel.Orm` has two areas of responsibility, and thus has a dependency to both the Domain model and the Dto model. A better approach would have been to put a separate implementation in a different projects and use a pattern to support Entity Framework. For instance repository and/or unit of work.  
+2 The Tools controller and seeding API is not authorized, for testing convenience, but could be very easily.  
+3 The instantatation of the `IntegrationEndpoint` and the plugin loader with the `IBackgroundWorker`pattern, might be a bit inside-out. Could be refactored to become more straightforward. But, as this is beoynd the programming task anyway, I'll leave it like that.
 
 ## Taxonomy
 

@@ -86,9 +86,14 @@ namespace OnionDlx.SolPwr.Services
         }
 
 
-        public Task<MeteoData> GetMeteoDataAsync(GeoCoordinate geoCoordinate, DateTime time)
+        public Task<IEnumerable<MeteoData>> GetMeteoDataAsync(GeoCoordinate geoCoordinate, DateTime time)
         {
-            return Task.FromResult(new MeteoData { Location = geoCoordinate, Visibility = 9000, WeatherCode = 3 });
+            var result = new List<MeteoData>();
+            result.Add(new MeteoData { Location = geoCoordinate, Visibility = 9000, WeatherCode = 3 });
+            result.Add(new MeteoData { Location = geoCoordinate, Visibility = 3000, WeatherCode = 5 });
+            result.Add(new MeteoData { Location = geoCoordinate, Visibility = 3000, WeatherCode = 1 });
+
+            return Task.FromResult(result.AsEnumerable());
         }
     }
 }

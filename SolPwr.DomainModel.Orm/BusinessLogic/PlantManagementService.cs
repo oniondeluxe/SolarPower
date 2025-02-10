@@ -105,8 +105,28 @@ namespace OnionDlx.SolPwr.BusinessLogic
         }
 
 
-        private void OnUpdateProductionData(IMeteoLookupService endpoint)
+        private void OnUpdateProductionData(IMeteoLookupService meteo)
         {
+            var now = DateTime.UtcNow;
+            var tempStorage = new List<(Guid, IList<MeteoData>)>();
+            using (var context = new UtilitiesContext(_connString))
+            {              
+                // Go through all plants and find their location etc
+                var plants = from p in context.PowerPlants select p;
+                foreach (var plant in plants)
+                {
+                    var mdList = new List<MeteoData>();
+                    var data = meteo.GetMeteoDataAsync(plant.Location, now).Result;
+                    mdList.AddRange(data);
+                    tempStorage.Add((plant.Id, mdList));
+                }
+            }
+
+            // Now, update the DB with these added rows
+            foreach (var item in tempStorage)
+            {
+                // TODO: Insert rows
+            }
         }
 
 
@@ -180,6 +200,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
             }
             else if (type == PowerDataTypes.Forecast)
             {
+                // Forecast, we ask the meteo service
                 var meteo = _factory.GetEndpoint();
 
                 // Find the plant in question first
@@ -196,20 +217,21 @@ namespace OnionDlx.SolPwr.BusinessLogic
                         // Fake science - The latitude will influence how much power the sun will generate
                         var now = DateTime.UtcNow;
                         var data = await meteo.GetMeteoDataAsync(currentPlant.Location, now);
-                        var calc = new PowerCalculator(currentPlant.PowerCapacity, currentPlant.Location.Latitude);
-                        var power = calc.GetCurrentPower(data.WeatherCode, data.Visibility);
-                        result.Add(new PlantPowerData
+                        foreach (var dp in data)
                         {
-                            PlantId = currentPlant.Id,
-                            CurrentPower = power,
-                            UtcTime = now
-                        });
+                            var calc = new PowerCalculator(currentPlant.PowerCapacity, currentPlant.Location.Latitude);
+                            var power = calc.GetCurrentPower(dp.WeatherCode, dp.Visibility);
+                            result.Add(new PlantPowerData
+                            {
+                                PlantId = currentPlant.Id,
+                                CurrentPower = power,
+                                UtcTime = dp.UtcTime
+                            });
+                        }
 
                         return result;
                     }
                 }
-
-                return Array.Empty<PlantPowerData>();
             }
 
             // Nothing ordered, or nothing found
@@ -227,6 +249,8 @@ namespace OnionDlx.SolPwr.BusinessLogic
             _factory = factory;
             _factory.ServicePushUpdate += (sender, service) =>
             {
+                // The background worker will invoke this, but WE have to take care if it, using the 
+                // caller, to ask for data from the Internet
                 OnUpdateProductionData(service);
             };
         }

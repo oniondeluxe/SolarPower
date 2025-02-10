@@ -11,6 +11,8 @@ namespace OnionDlx.SolPwr.Dto
     {
         public GeoCoordinate Location { get; set; }
 
+        public DateTime UtcTime { get; set; }
+
         public int Visibility { get; set; }
 
         public int WeatherCode { get; set; }

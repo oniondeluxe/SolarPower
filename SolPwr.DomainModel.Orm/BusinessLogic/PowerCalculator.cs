@@ -17,7 +17,21 @@ namespace OnionDlx.SolPwr.Services
 
         public double GetCurrentPower(int weatherCode, int visibility)
         {
-            return 0.0;
+            // Fake science is applied here. Elon Musk will know for sure
+
+            if(weatherCode > 3)
+            {
+                // Cloudy - no sun
+                return 0.0;
+            }                       
+
+            var currentVisibiltiy = 10000;
+            if(visibility < currentVisibiltiy)
+            {
+                currentVisibiltiy = visibility;
+            }
+
+            return _nominalPowerCapacity * (currentVisibiltiy / 10000.0) * ((90.0 - _latitude) / 90.0);
         }
 
 

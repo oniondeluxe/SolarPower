@@ -4,6 +4,8 @@ namespace OnionDlx.SolPwr.Application.Services
 {
     public class PlantOperationSpinner : IHostedService
     {
+        public static bool Enabled { get; set; }
+
         private readonly ILogger<PlantOperationSpinner> _logger;
         private Timer _timer;
         private readonly IIntegrationProxy _integrationProxy;
@@ -16,13 +18,17 @@ namespace OnionDlx.SolPwr.Application.Services
 
 
         public Task StartAsync(CancellationToken cancellationToken)
-        {            
+        {
             try
             {
                 _integrationProxy.Initialize(cancellationToken);
-                return Task.CompletedTask;
+                if (!Enabled)
+                {
+                    return Task.CompletedTask;
+                }
 
-                _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
+                // This should not be run this often, but every 10 second is for illustration/debugging proposes
+                _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
             }
             catch (Exception ex)
             {
@@ -37,7 +43,7 @@ namespace OnionDlx.SolPwr.Application.Services
 
         private void DoWork(object state)
         {
-            _logger.LogInformation($"Background task is running on '{_integrationProxy.Title}'.");            
+            _logger.LogInformation($"Background task is running on '{_integrationProxy.Title}'.");
 
             // We will ow push back into the Plant CRUD layer to run the show,
             // and with ourselves as arguments

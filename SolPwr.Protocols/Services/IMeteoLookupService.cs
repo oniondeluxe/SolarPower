@@ -10,7 +10,7 @@ namespace OnionDlx.SolPwr.Services
 {
     public interface IMeteoLookupService
     {
-        Task<MeteoData> GetMeteoDataAsync(GeoCoordinate geoCoordinate, DateTime time);
+        Task<IEnumerable<MeteoData>> GetMeteoDataAsync(GeoCoordinate geoCoordinate, DateTime time);
     }
 
 
