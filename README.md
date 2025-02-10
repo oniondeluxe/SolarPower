@@ -112,10 +112,10 @@ The fields in the query string can have the follwoing values:
 | Field | Values |
 | ------- | ------- |
 | `Plant ID` | The GUID id for the plant |
-| `Type Code` | 1 = History\ 2 = Prognosis |
+| `Type Code` | 1 = History<br/> 2 = Prognosis |
 | `Resolution Key` | 15 = Every fifteen minutes\ 60 = Every hour |
 | `Time Span Value` | The quantity of the desired time, according to its units |
-| `Time Span Type` | ['m' \| 's'] |
+| `Time Span Type` | ['d' \| 'h' \| 'm'] |
 
 ## Component structure
 
