@@ -186,5 +186,5 @@ Some shortcuts have been taken to limit the scope, and to stay on focus
 2 The Tools controller and seeding API is not authorized, for testing convenience, but could be very easily.  
 3 The instantatation of the `IntegrationEndpoint` and the plugin loader with the `IBackgroundWorker`pattern, might be a bit inside-out. Could be refactored to become more straightforward. But, as this is beyond the programming task anyway, I'll leave it like that.  
 4 When asking for 15 min data points, some interpolation needs to take place. This is not implemented.  
-5 SQL Migrations should be generated as standalon SQL script files, so that they could be run in a more generic setup. Now, the NuGet package manager has to be used interactively  
+5 SQL Migrations should be generated as standalone SQL script files, so that they could be run in a more generic setup. Now, the NuGet package manager has to be used interactively. And also, a more robust DB versioning mechanism, including startup check, would be needed in a real system.  
 6 And, of course the obvious - no test projects are included.  
