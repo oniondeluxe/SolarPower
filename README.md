@@ -13,15 +13,19 @@ The compilation of material serves two purposes:
 
 After cloning the material to a local disk, the following steps should be carried out:  
 1 Use a client connection to an MS SQL database (I used MS SQL Server Management Studio), and run the scripts in the folder:  
-`$/SQL/DDL`  
-Some paths in the local file system might have to be modified first.  
 
-2 Open Visual Studio, and run the NuGet package manager console. Set the default project to `SolPwr.DomainModel.Orm`. Run:  
+`$/SQL/DDL`  
+
+Some paths in the local file system might have to be modified first (good to know for people still using floppy disk drives).  
+
+2 Open Visual Studio, and run the NuGet package manager console. Set the default project to `SolPwr.DomainModel.Orm`.  
+Run:  
 ```
 Update-Database -context UtilitiesContext 
 ```  
 
-3 Still in the NuGet package manager console, switch the default project to `SolPwr.AuthModel`. Run:  
+3 Still in the NuGet package manager console, switch the default project to `SolPwr.AuthModel`.  
+Run:  
 ```
 Update-Database -context AuthIdentityContext
 ```  
@@ -30,7 +34,7 @@ Update-Database -context AuthIdentityContext
 
 ## Using the API
 
-### Authorize
+### Authorization
 Create at least one user account with the **POST** call:
 
 `http://localhost:5132/auth/register`  
@@ -81,7 +85,7 @@ Fill in the body according to this example:
 }
 ```
 
-To delete an existing plant, and all its related power history. Use the following **PUT**:  
+To delete an existing plant, and all its related power history, use the following **PUT**:  
 
 `http://localhost:5132/api/DeletePlant?id={Plant ID}`  
 
@@ -183,7 +187,7 @@ The purpose of this, is to keep a separation between the logical object oriented
 
 Some shortcuts have been taken to limit the scope, and to stay on focus  
 1 The project `SolPwr.DomainModel.Orm` has two areas of responsibility, and thus has a dependency to both the Domain model and the Dto model. A better approach would have been to put a separate implementation in a different projects and use a pattern to support Entity Framework. For instance repository and/or unit of work.  
-2 The Tools controller and seeding API is not authorized, for testing convenience, but could be very easily.  
+2 The Tools controller and seeding API is not authorized, for testing convenience, but could very easily become so.  
 3 The instantatation of the `IntegrationEndpoint` and the plugin loader with the `IBackgroundWorker`pattern, might be a bit inside-out. Could be refactored to become more straightforward. But, as this is beyond the programming task anyway, I'll leave it like that.  
 4 When asking for 15 min data points, some interpolation needs to take place. This is not implemented.  
 5 SQL Migrations should be generated as standalone SQL script files, so that they could be run in a more generic setup. Now, the NuGet package manager has to be used interactively. And also, a more robust DB versioning mechanism, including startup check, would be needed in a real system.  
