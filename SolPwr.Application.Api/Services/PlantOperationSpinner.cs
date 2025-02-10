@@ -17,11 +17,10 @@ namespace OnionDlx.SolPwr.Application.Services
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            return Task.CompletedTask;
             try
             {
                 _integrationProxy.Initialize(cancellationToken);
-                _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(60));
+                _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
             }
             catch (Exception ex)
             {
@@ -37,9 +36,11 @@ namespace OnionDlx.SolPwr.Application.Services
         private void DoWork(object state)
         {
             _logger.LogInformation("Background task is running.");
+            
 
-            // By now, we have figured out which plugin to go to
-            _integrationProxy.GetEndpoint()?.ExecuteAsync().Wait();
+            // We will ow push back into the Plant CRUD layer to run the show,
+            // and with ourselves as arguments
+            _integrationProxy.ExecuteWorker();
         }
 
 

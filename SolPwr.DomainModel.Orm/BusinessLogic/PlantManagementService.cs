@@ -17,6 +17,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
         readonly ContextUoW _uow;
         readonly string _connString;
         readonly ILogger<IPlantManagementService> _logger;
+        readonly IMeteoLookupServiceCallback _factory;
 
         public async Task<PlantMgmtResponse> CreatePlantAsync(PowerPlant dtoRegister)
         {
@@ -85,8 +86,8 @@ namespace OnionDlx.SolPwr.BusinessLogic
             var result = new List<PowerPlantImmutable>();
             using (var context = new UtilitiesContext(_connString))
             {
-                var result1 = await context.PowerPlants.ToListAsync();
-                foreach (var dbRecord in result1)
+                var plants = await context.PowerPlants.ToListAsync();
+                foreach (var dbRecord in plants)
                 {
                     result.Add(new PowerPlantImmutable
                     {
@@ -101,6 +102,12 @@ namespace OnionDlx.SolPwr.BusinessLogic
 
             return result;
         }
+
+
+        private void OnUpdateProductionData(IMeteoLookupService endpoint)
+        {
+        }
+
 
 
         public async Task<PlantMgmtResponse> SeedPlantsAsync(int quartersBehind)
@@ -135,18 +142,34 @@ namespace OnionDlx.SolPwr.BusinessLogic
         }
 
 
-        public Task<IEnumerable<PlantPowerData>> GetPowerDataAsync(Guid identity, PowerDataTypes type, TimeResolution resol, TimeSpanCode code, int timeSpan)
+        public async Task<IEnumerable<PlantPowerData>> GetPowerDataAsync(Guid identity, PowerDataTypes type, TimeResolution resol, TimeSpanCode code, int timeSpan)
         {
-            throw new NotImplementedException();
+            var meteo = _factory.GetEndpoint();
+            using (var context = new UtilitiesContext(_connString))
+            {
+                var plants = await context.PowerPlants.ToListAsync();
+                foreach (var plant in plants)
+                {
+                    var data = await meteo.GetMeteoDataAsync(plant.Location, DateTime.UtcNow);
+                }                
+            }            
+
+            return null;
         }
 
 
-        public PlantManagementService(string connString, ILogger<IPlantManagementService> logger)
+        public PlantManagementService(string connString, ILogger<IPlantManagementService> logger, IMeteoLookupServiceCallback factory)
         {
             _connString = connString;
-            _logger = logger;
-
+            _logger = logger;            
             _uow = new ContextUoW(logger, connString);
+
+            // Subscribe to events coming from the outer worker
+            _factory = factory;
+            _factory.ServicePushUpdate += (sender, service) =>
+            {
+                OnUpdateProductionData(service);
+            };
         }
     }
 

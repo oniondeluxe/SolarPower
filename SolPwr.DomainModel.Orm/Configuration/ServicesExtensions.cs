@@ -14,6 +14,9 @@ using System.Threading.Tasks;
 
 namespace OnionDlx.SolPwr.Configuration
 {
+    
+
+
     public static class ServicesDomainExtensions
     {
         /// <summary>
@@ -23,11 +26,13 @@ namespace OnionDlx.SolPwr.Configuration
         /// <returns></returns>
         public static IServiceCollection AddPersistence(this IServiceCollection coll, string connString)
         {
+            var glue = new MeteoLookupServiceCallback();
             coll.AddDbContext<UtilitiesContext>(options => options.UseSqlServer(connString));
+            coll.AddSingleton<IMeteoLookupServiceCallback>(provider => glue);
             coll.AddScoped<IPlantManagementService>(provider =>
             {
                 var logger = provider.GetRequiredService<ILogger<IPlantManagementService>>();
-                return new PlantManagementService(connString, logger);
+                return new PlantManagementService(connString, logger, glue);
             });
 
             return coll;

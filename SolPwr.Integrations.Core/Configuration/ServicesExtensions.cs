@@ -20,7 +20,8 @@ namespace OnionDlx.SolPwr.Configuration
             coll.AddSingleton<IIntegrationProxy>(provider =>
             {
                 var logger = provider.GetRequiredService<ILogger<IIntegrationProxy>>();
-                return new IntegrationProxy(meteoServiceSection, logger);
+                var factory = provider.GetRequiredService<IMeteoLookupServiceCallback>();
+                return new IntegrationProxy(meteoServiceSection, logger, factory);
             });
 
             return coll;

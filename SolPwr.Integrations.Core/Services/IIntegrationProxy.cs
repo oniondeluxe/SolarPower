@@ -12,6 +12,6 @@ namespace OnionDlx.SolPwr.Services
 
         void Cleanup();
 
-        IIntegrationEndpoint GetEndpoint();
+        void ExecuteWorker();
     }
 }

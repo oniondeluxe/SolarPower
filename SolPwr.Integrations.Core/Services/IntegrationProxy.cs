@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OnionDlx.SolPwr.ComponentModel;
 using System;
@@ -14,6 +15,7 @@ namespace OnionDlx.SolPwr.Services
         IIntegrationEndpoint _endpoint;
         readonly ILogger<IIntegrationProxy> _logger;
         readonly IConfigurationSection _configurationSection;
+        readonly IMeteoLookupServiceCallback _factory;
 
         public void Initialize(CancellationToken cancellationToken)
         {
@@ -28,27 +30,36 @@ namespace OnionDlx.SolPwr.Services
                 {
                     _logger.LogError(message);
                 }
+
+                // When we explicitly need to call the endpoint from inside the CRUD layer, 
+                // like when calculating forecast values
+                _factory.OnRequestEndpoint(() =>
+                {
+                    return _endpoint.GetLookupService();
+                });
             }
         }
 
 
         public void Cleanup()
         {
+            _factory?.Teardown();
             _endpoint?.Dispose();
         }
 
 
-        public IIntegrationEndpoint GetEndpoint()
+        public void ExecuteWorker()
         {
-            // Callback to the meteo service of our choice can be done from here
-            return _endpoint;
+            // Place the call back to the PlantManagementService here
+            _factory.InvokePush(_endpoint.GetLookupService());
         }
 
 
-        public IntegrationProxy(IConfigurationSection configurationSection, ILogger<IIntegrationProxy> logger)
+        public IntegrationProxy(IConfigurationSection configurationSection, ILogger<IIntegrationProxy> logger, IMeteoLookupServiceCallback factory)
         {
             _configurationSection = configurationSection;
             _logger = logger;
+            _factory = factory;
         }
     }
 }

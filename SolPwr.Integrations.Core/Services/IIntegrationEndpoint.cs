@@ -12,6 +12,6 @@ namespace OnionDlx.SolPwr.Services
     {
         void Initialize(ILogger<IIntegrationProxy> logger, IConfigurationSection configurationSection);
 
-        Task ExecuteAsync();
+        IMeteoLookupService GetLookupService();
     }
 }
