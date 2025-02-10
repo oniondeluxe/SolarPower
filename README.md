@@ -1,7 +1,7 @@
 # SolarPower
 
 This is the results of the software development home task for Uprise.\
-&copy; 2025 Daniel Zagar
+&copy; 2025 Daniel Žagar
 
 ## Personal note
 
@@ -12,11 +12,19 @@ The compilation of material serves two purposes:
 ## Getting started
 
 After cloning the material to a local disk, the following steps should be carried out:  
-1 Use a client connection to an MS SQL database (I used MS SQL Server Management Studio), and run the scripts in the folder: `$/SQL/DDL`  
+1 Use a client connection to an MS SQL database (I used MS SQL Server Management Studio), and run the scripts in the folder:  
+`$/SQL/DDL`  
+Some paths in the local file system might have to be modified first.  
 
-2 Open Visual Studio, and run the NuGet package manager console. Set the default project to `SolPwr.DomainModel.Orm`. Run `Update-Database -context UtilitiesContext`  
+2 Open Visual Studio, and run the NuGet package manager console. Set the default project to `SolPwr.DomainModel.Orm`. Run:  
+```
+Update-Database -context UtilitiesContext 
+```  
 
-3 Still in the NuGet package manager console, switch the default project to `SolPwr.AuthModel`. Run `Update-Database -context AuthIdentityContext`  
+3 Still in the NuGet package manager console, switch the default project to `SolPwr.AuthModel`. Run:  
+```
+Update-Database -context AuthIdentityContext
+```  
 
 4 Now, the application can be fired up. 
 
@@ -153,14 +161,6 @@ Please note that the `MeteoService` configuration section has the value `open-me
 
 Logging is not covered everywhere or on every level, but more like to illustrate some useful patterns.
 
-## Flaws, sources of improvements and other remarks
-
-Some shortcuts have been taken to limit the scope, and to stay on focus  
-1 The project `SolPwr.DomainModel.Orm` has two areas of responsibility, and thus has a dependency to both the Domain model and the Dto model. A better approach would have been to put a separate implementation in a different projects and use a pattern to support Entity Framework. For instance repository and/or unit of work.  
-2 The Tools controller and seeding API is not authorized, for testing convenience, but could be very easily.  
-3 The instantatation of the `IntegrationEndpoint` and the plugin loader with the `IBackgroundWorker`pattern, might be a bit inside-out. Could be refactored to become more straightforward. But, as this is beoynd the programming task anyway, I'll leave it like that.  
-4 When asking for 15 min data points, some interpolation needs to take place. This is not implemented.  
-5 And, of course the obvious - no test projects are included.  
 
 ## Taxonomy
 
@@ -178,3 +178,13 @@ is used in both the projects `SolPwr.DomainModel` and `SolPwr.DomainModel.Orm`
 
 The purpose of this, is to keep a separation between the logical object oriented abstractions inside the software stack, apart from the dependency and component hierarchy incarnated in the project files. These _can_ correlate incidentally, but not in general.
 
+
+## Flaws, sources of improvements and other remarks
+
+Some shortcuts have been taken to limit the scope, and to stay on focus  
+1 The project `SolPwr.DomainModel.Orm` has two areas of responsibility, and thus has a dependency to both the Domain model and the Dto model. A better approach would have been to put a separate implementation in a different projects and use a pattern to support Entity Framework. For instance repository and/or unit of work.  
+2 The Tools controller and seeding API is not authorized, for testing convenience, but could be very easily.  
+3 The instantatation of the `IntegrationEndpoint` and the plugin loader with the `IBackgroundWorker`pattern, might be a bit inside-out. Could be refactored to become more straightforward. But, as this is beyond the programming task anyway, I'll leave it like that.  
+4 When asking for 15 min data points, some interpolation needs to take place. This is not implemented.  
+5 SQL Migrations should be generated as standalon SQL script files, so that they could be run in a more generic setup. Now, the NuGet package manager has to be used interactively  
+6 And, of course the obvious - no test projects are included.  
