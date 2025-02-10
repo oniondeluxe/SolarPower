@@ -14,16 +14,7 @@ namespace OnionDlx.SolPwr.Services
     }
 
 
-    public interface IMeteoLookupServiceCallback
+    public interface IMeteoLookupServiceCallback : IServiceCallback<IMeteoLookupService>
     {
-        event EventHandler<IMeteoLookupService> ServicePushUpdate;
-
-        void OnRequestEndpoint(Func<IMeteoLookupService> getService);
-
-        IMeteoLookupService GetEndpoint();
-
-        void InvokePush(IMeteoLookupService service);
-
-        void Teardown();
     }
 }

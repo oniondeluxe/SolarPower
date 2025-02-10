@@ -25,7 +25,7 @@ namespace OnionDlx.SolPwr.Services
                 {
                     if (!item.HourlyValues.Time.Any())
                     {
-                        throw new ArgumentException("Insufficient data");
+                        yield break;
                     }
                     DateTime start;
                     if (!DateTime.TryParse(item.HourlyValues.Time.First(), out start))
@@ -74,13 +74,11 @@ namespace OnionDlx.SolPwr.Services
                         }
                         else
                         {
-                            throw new ArgumentException("Ivalid time format");
+                            throw new ArgumentException("Invalid time format");
                         }
                     }
                 }
             }
-
-            yield break;
         }
     }
 }
