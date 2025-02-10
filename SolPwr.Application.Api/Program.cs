@@ -16,6 +16,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 // The spinner for meteo data download
+PlantOperationSpinner.Enabled = bool.Parse(builder.Configuration.GetSection("MeteoService")["Worker-Enabled"]);
 builder.Services.AddHostedService<PlantOperationSpinner>();
 
 var app = builder.Build();

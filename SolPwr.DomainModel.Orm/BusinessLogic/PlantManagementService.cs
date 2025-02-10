@@ -41,7 +41,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
             });
 
             // TODO
-            // Make sure we start seeding power data
+            // Make sure we start seeding power data in the worker thread
         }
 
 
