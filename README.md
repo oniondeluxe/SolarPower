@@ -81,6 +81,23 @@ where `Plant ID` is the GUID value of the plant in question. Example:
 
 `http://localhost:5132/api/DeletePlant?id=9C8D7E47-5F83-4BE8-B323-D9D2F1439FD0`  
 
+To update the properties of a plant (albeit altering the location dosen't make sense in reality), use the **PUT**:  
+
+`http://localhost:5132/api/UpdatePlant?id={Plant ID}`  
+
+Fill in the body according to this example:  
+```
+{
+    "plantName": "Plant API",
+    "utcInstallDate": "2025-02-09T09:40:00",
+    "location": {
+        "latitude": 10,
+        "longitude": 20
+    },
+    "powerCapacity": 400
+}
+```
+
 
 ## Component structure
 
