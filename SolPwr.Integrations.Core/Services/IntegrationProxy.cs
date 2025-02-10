@@ -40,6 +40,8 @@ namespace OnionDlx.SolPwr.Services
             }
         }
 
+        public string Title => _endpoint?.Title;
+
 
         public void Cleanup()
         {

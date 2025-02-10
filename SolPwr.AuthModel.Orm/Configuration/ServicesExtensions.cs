@@ -16,7 +16,7 @@ namespace OnionDlx.SolPwr.Configuration
     public static class ServicesAuthExtensions
     {
         /// <summary>
-        /// Will add the needed boilerplate to IoC, without the need to introduce a dependency to EF in the main app
+        /// Will add the needed boilerplate to IoC, without the need to introduce a dependency to identity in the main app
         /// </summary>
         /// <param name="connString"></param>
         /// <returns></returns>
@@ -25,7 +25,9 @@ namespace OnionDlx.SolPwr.Configuration
             coll.AddDbContext<AuthIdentityContext>(options => options.UseSqlServer(connString));
             coll.AddIdentity<IdentityUser, IdentityRole>(options =>
             {
-                options.Password.RequireDigit = true;
+                // Cheaping out on the policies here ;)
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 3;
             })
                 .AddEntityFrameworkStores<AuthIdentityContext>()
@@ -52,13 +54,7 @@ namespace OnionDlx.SolPwr.Configuration
                         RequireExpirationTime = false,
                         IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
                     };
-
-                    //options.Authority = "https://localhost:5001";
-                    //options.Audience = "https://localhost:5001/resources";
-                    //options.RequireHttpsMetadata = false;
                 });
-
-
 
             coll.AddScoped<IUserAuthService, UserAuthService>();
 

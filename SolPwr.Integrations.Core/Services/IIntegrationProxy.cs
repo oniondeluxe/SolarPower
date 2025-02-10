@@ -13,5 +13,7 @@ namespace OnionDlx.SolPwr.Services
         void Cleanup();
 
         void ExecuteWorker();
+
+        string Title { get; }
     }
 }

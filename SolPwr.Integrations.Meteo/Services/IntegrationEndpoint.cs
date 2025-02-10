@@ -16,18 +16,40 @@ namespace OnionDlx.SolPwr.Services
         ILogger<IIntegrationProxy> Logger { get; set; }
         IConfigurationSection ConfigurationSection { get; set; }
 
-        public void Dispose()
-        {
-        }
+        #region IDisposable
+
+        private bool disposed = false;
 
         ~IntegrationEndpoint()
         {
+            Dispose(false);
         }
+
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                // TODO
+                disposed = true;
+            }
+        }
+
+        #endregion
 
         public IntegrationEndpoint()
         {
             // Instantiated by Reflection
         }
+
+        public string Title => "api.open-meteo.com";
 
 
         public IMeteoLookupService GetLookupService()
@@ -43,15 +65,17 @@ namespace OnionDlx.SolPwr.Services
         }
 
 
-        public async Task<MeteoData> ExecuteAsync(double latitude, double longitude, int dayLapse)
-        {            
+        public async Task<MeteoData> FetchDataAsync(double latitude, double longitude, int dayLapse)
+        {
             var url = $"https://api.open-meteo.com/v1/forecast?latitude={latitude}&longitude={longitude}&hourly=weather_code,visibility&forecast_days={dayLapse}";
 
             // Go to the meteo service
-            var client = new HttpClient();
-            var response = await client.GetAsync(url);
-            var data = await response.Content.ReadAsStringAsync();
-            var instance = JsonSerializer.Deserialize<List<ProviderMeteoData>>(data);
+            using (var client = new HttpClient())
+            {
+                var response = await client.GetAsync(url);
+                var data = await response.Content.ReadAsStringAsync();
+                var instance = JsonSerializer.Deserialize<List<ProviderMeteoData>>(data);
+            }
 
             // Weather code
 
