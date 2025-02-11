@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add our services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddPersistence(connectionString);
+builder.Services.AddBusinessLogic();
 builder.Services.AddAuthServices(builder.Configuration, connectionString);
 
 // Add the integration to some meterological forecast service

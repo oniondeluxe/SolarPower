@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace OnionDlx.SolPwr.Configuration
 {  
-    public static class ServicesDomainExtensions
+    public static class ServicesOrmExtensions
     {
         /// <summary>
         /// Will add the needed boilerplate to IoC, without the need to introduce a dependency to EF in the main app
@@ -25,14 +25,14 @@ namespace OnionDlx.SolPwr.Configuration
         {
             coll.AddDbContext<UtilitiesContext>(options => options.UseSqlServer(connString));
 
-            // This is the connection point between the external communication layer and the domain layer
-            var glue = new MeteoLookupServiceCallback();            
-            coll.AddSingleton<IMeteoLookupServiceCallback>(provider => glue);
-            coll.AddScoped<IPlantManagementService>(provider =>
-            {
-                var logger = provider.GetRequiredService<ILogger<IPlantManagementService>>();
-                return new PlantManagementService(connString, logger, glue);
-            });
+            //// This is the connection point between the external communication layer and the domain layer
+            //var glue = new MeteoLookupServiceCallback();            
+            //coll.AddSingleton<IMeteoLookupServiceCallback>(provider => glue);
+            //coll.AddScoped<IPlantManagementService>(provider =>
+            //{
+            //    var logger = provider.GetRequiredService<ILogger<IPlantManagementService>>();
+            //    return new PlantManagementService(connString, logger, glue);
+            //});
 
             return coll;
         }

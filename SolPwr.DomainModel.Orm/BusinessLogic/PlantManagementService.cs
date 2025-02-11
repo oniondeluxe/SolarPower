@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace OnionDlx.SolPwr.BusinessLogic
 {
+    /*
     internal class PlantManagementService : IPlantManagementService
     {
         readonly ContextUoW _uow;
@@ -265,4 +266,5 @@ namespace OnionDlx.SolPwr.BusinessLogic
             };
         }
     }
+    */
 }
