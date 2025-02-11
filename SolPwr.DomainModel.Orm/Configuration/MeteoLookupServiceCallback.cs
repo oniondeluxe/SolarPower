@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace OnionDlx.SolPwr.Configuration
 {
+    /*
     class MeteoLookupServiceCallback : IMeteoLookupServiceCallback
     {
         Func<IMeteoLookupService> _getService;
@@ -55,4 +56,5 @@ namespace OnionDlx.SolPwr.Configuration
         {
         }
     }
+    */
 }

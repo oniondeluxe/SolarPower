@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OnionDlx.SolPwr.BusinessLogic;
+using OnionDlx.SolPwr.BusinessObjects;
 using OnionDlx.SolPwr.Dto;
 using OnionDlx.SolPwr.Persistence;
 using OnionDlx.SolPwr.Services;
@@ -24,6 +25,11 @@ namespace OnionDlx.SolPwr.Configuration
         public static IServiceCollection AddPersistence(this IServiceCollection coll, string connString)
         {
             coll.AddDbContext<UtilitiesContext>(options => options.UseSqlServer(connString));
+            coll.AddScoped<IUtilitiesRepositoryFactory>(provider =>
+            {
+                var logger = provider.GetRequiredService<ILogger<IUtilitiesRepositoryFactory>>();
+                return new UtilitiesRepositoryFactory(connString, logger);
+            });
 
             //// This is the connection point between the external communication layer and the domain layer
             //var glue = new MeteoLookupServiceCallback();            

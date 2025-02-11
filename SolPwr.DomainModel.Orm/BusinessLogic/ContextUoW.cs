@@ -14,6 +14,8 @@ namespace OnionDlx.SolPwr.BusinessLogic
     /// <summary>
     /// A very simplified unit of work. Making sure everything is handled uniformly, including logging
     /// </summary>
+    /// 
+    /*
     internal class ContextUoW
     {
         readonly ILogger<IPlantManagementService> _logger;
@@ -72,4 +74,5 @@ namespace OnionDlx.SolPwr.BusinessLogic
             _connString = connStr;
         }
     }
+    */
 }

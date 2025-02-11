@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OnionDlx.SolPwr.BusinessLogic;
+using OnionDlx.SolPwr.BusinessObjects;
 using OnionDlx.SolPwr.Services;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,8 @@ namespace OnionDlx.SolPwr.Configuration
             coll.AddScoped<IPlantManagementService>(provider =>
             {
                 var logger = provider.GetRequiredService<ILogger<IPlantManagementService>>();
-                return new PlantManagementService(logger, glue);
+                var factory = provider.GetRequiredService<IUtilitiesRepositoryFactory>();
+                return new PlantManagementService(factory, logger, glue);
             });
 
             return coll;

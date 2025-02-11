@@ -15,8 +15,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
 {
     internal class PlantManagementService : IPlantManagementService
     {
-      //  readonly ContextUoW _uow;
-        //readonly string _connString;
+        readonly BusinessObjects.IUtilitiesRepositoryFactory _repoFac;
         readonly ILogger<IPlantManagementService> _logger;
         readonly IMeteoLookupServiceCallback _meteoCallback;
 
@@ -264,11 +263,10 @@ namespace OnionDlx.SolPwr.BusinessLogic
         }
 
 
-        public PlantManagementService(ILogger<IPlantManagementService> logger, IMeteoLookupServiceCallback factory)
+        public PlantManagementService(BusinessObjects.IUtilitiesRepositoryFactory repo, ILogger<IPlantManagementService> logger, IMeteoLookupServiceCallback factory)
         {
-          //  _connString = connString;
             _logger = logger;
-          //  _uow = new ContextUoW(logger, connString);
+            _repoFac = repo;
 
             // Subscribe to events coming from the outer worker
             _meteoCallback = factory;
