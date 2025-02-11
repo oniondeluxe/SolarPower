@@ -265,6 +265,4 @@ namespace OnionDlx.SolPwr.BusinessLogic
             };
         }
     }
-
-
 }
