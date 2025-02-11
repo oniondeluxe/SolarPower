@@ -31,15 +31,6 @@ namespace OnionDlx.SolPwr.Configuration
                 return new UtilitiesRepositoryFactory(connString, logger);
             });
 
-            //// This is the connection point between the external communication layer and the domain layer
-            //var glue = new MeteoLookupServiceCallback();            
-            //coll.AddSingleton<IMeteoLookupServiceCallback>(provider => glue);
-            //coll.AddScoped<IPlantManagementService>(provider =>
-            //{
-            //    var logger = provider.GetRequiredService<ILogger<IPlantManagementService>>();
-            //    return new PlantManagementService(connString, logger, glue);
-            //});
-
             return coll;
         }
     }

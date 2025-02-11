@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using OnionDlx.SolPwr.BusinessObjects;
 using OnionDlx.SolPwr.Data;
-using OnionDlx.SolPwr.Dto;
 using OnionDlx.SolPwr.Services;
 using System;
 using System.Collections.Generic;
@@ -15,12 +15,22 @@ namespace OnionDlx.SolPwr.BusinessLogic
 {
     internal class PlantManagementService : IPlantManagementService
     {
-        readonly BusinessObjects.IUtilitiesRepositoryFactory _repoFac;
+        readonly IUtilitiesRepositoryFactory _repoFac;
         readonly ILogger<IPlantManagementService> _logger;
         readonly IMeteoLookupServiceCallback _meteoCallback;
 
+
+        private IUtilitiesRepositoryFactory Database
+        {
+            get
+            {
+                return _repoFac;
+            }
+        }
+
+
         public //async 
-            Task<PlantMgmtResponse> CreatePlantAsync(PowerPlant dtoRegister)
+            Task<Dto.PlantMgmtResponse> CreatePlantAsync(Dto.PowerPlant dtoRegister)
         {
             //// Bump the database
             //var plantId = await _uow.ExecuteCommandAsync(context =>
@@ -43,12 +53,12 @@ namespace OnionDlx.SolPwr.BusinessLogic
 
             //return plantId;
 
-            return Task.FromResult<PlantMgmtResponse>(null);
+            return Task.FromResult<Dto.PlantMgmtResponse>(null);
         }
 
 
         public //async 
-            Task<PlantMgmtResponse> UpdatePlantAsync(Guid identity, PowerPlant dtoRegister)
+            Task<Dto.PlantMgmtResponse> UpdatePlantAsync(Guid identity, Dto.PowerPlant dtoRegister)
         {
             //return await _uow.ExecuteCommandAsync(context =>
             //{
@@ -68,12 +78,12 @@ namespace OnionDlx.SolPwr.BusinessLogic
             //    return CommandResult.Create(PlantMgmtResponse.CreateSuccess(identity.ToString(), Guid.NewGuid()), true);
             //});
 
-            return Task.FromResult<PlantMgmtResponse>(null);
+            return Task.FromResult<Dto.PlantMgmtResponse>(null);
         }
 
 
         public // async 
-            Task<PlantMgmtResponse> DeletePlantAsync(Guid identity)
+            Task<Dto.PlantMgmtResponse> DeletePlantAsync(Guid identity)
         {
             //return await _uow.ExecuteCommandAsync(context =>
             //{
@@ -92,12 +102,21 @@ namespace OnionDlx.SolPwr.BusinessLogic
             //    return CommandResult.Create(PlantMgmtResponse.CreateSuccess(identity.ToString(), Guid.NewGuid()), true);
             //});
 
-            return Task.FromResult<PlantMgmtResponse>(null);
+            return Task.FromResult<Dto.PlantMgmtResponse>(null);
         }
 
 
-        public Task<IEnumerable<PowerPlantImmutable>> GetAllPlantsAsync()
+        public async Task<IEnumerable<Dto.PowerPlantImmutable>> GetAllPlantsAsync()
         {
+            var result = new List<Dto.PowerPlantImmutable>();
+            using (var repo = Database.NewQuery())
+            {
+                await foreach (var dbRecord in repo.PowerPlants)
+                {
+                    result.Add(dbRecord.ToDto());
+                }
+            }
+
             //return _uow.ExecuteQueryAsync<PowerPlantImmutable>(async context =>
             //{
             //    var result = new List<PowerPlantImmutable>();
@@ -115,7 +134,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
             //    return result;
             //});
 
-            return Task.FromResult<IEnumerable<PowerPlantImmutable>>(Array.Empty<PowerPlantImmutable>());
+            return result; // Task.FromResult<IEnumerable<PowerPlantImmutable>>(Array.Empty<PowerPlantImmutable>());
         }
 
 
@@ -146,7 +165,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
 
 
         public //async 
-            Task<PlantMgmtResponse> SeedPlantsAsync(int quartersBehind)
+            Task<Dto.PlantMgmtResponse> SeedPlantsAsync(int quartersBehind)
         {
             //// We only go back in time
             //if (quartersBehind <= 0)
@@ -179,12 +198,12 @@ namespace OnionDlx.SolPwr.BusinessLogic
             //    return CommandResult.Create(PlantMgmtResponse.CreateSuccess(counter.ToString(), Guid.NewGuid()), true);
             //});
 
-            return Task.FromResult<PlantMgmtResponse>(null);
+            return Task.FromResult<Dto.PlantMgmtResponse>(null);
         }
 
 
         public // async 
-            Task<IEnumerable<PlantPowerData>> GetPowerDataAsync(Guid identity, PowerDataTypes type, TimeResolution resol, TimeSpanCode code, int timeSpan)
+            Task<IEnumerable<Dto.PlantPowerData>> GetPowerDataAsync(Guid identity, PowerDataTypes type, TimeResolution resol, TimeSpanCode code, int timeSpan)
         {
             /*
             // History: we read from the stored data
@@ -259,11 +278,11 @@ namespace OnionDlx.SolPwr.BusinessLogic
             */
 
             // Nothing ordered, or nothing found
-            return Task.FromResult<IEnumerable<PlantPowerData>>(Array.Empty<PlantPowerData>());
+            return Task.FromResult<IEnumerable<Dto.PlantPowerData>>(Array.Empty<Dto.PlantPowerData>());
         }
 
 
-        public PlantManagementService(BusinessObjects.IUtilitiesRepositoryFactory repo, ILogger<IPlantManagementService> logger, IMeteoLookupServiceCallback factory)
+        public PlantManagementService(IUtilitiesRepositoryFactory repo, ILogger<IPlantManagementService> logger, IMeteoLookupServiceCallback factory)
         {
             _logger = logger;
             _repoFac = repo;

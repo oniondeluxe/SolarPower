@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OnionDlx.SolPwr.BusinessObjects
 {
-    public interface IBusinessObjectCollection<T> : IEnumerable<T>
+    public interface IBusinessObjectCollection<out T> : IEnumerable<T>, IAsyncEnumerable<T>
         where T : IBusinessObject
     {
         // Not used
