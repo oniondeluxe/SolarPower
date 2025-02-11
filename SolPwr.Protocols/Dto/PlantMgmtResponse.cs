@@ -6,22 +6,18 @@ using System.Threading.Tasks;
 
 namespace OnionDlx.SolPwr.Dto
 {
-    public class PlantMgmtResponse : IDataTransferObject
+    public class PlantMgmtResponse : ApiResponse
     {
         public Guid? Id { get; set; }
 
-        public bool Success { get; set; }   
 
-        public string Message { get; set; }
-
-        public IEnumerable<(string, string)> ErrorInfo { get; set; }
-
-        public static PlantMgmtResponse CreateSuccess(string message)
+        public static PlantMgmtResponse CreateSuccess(string message, Guid? transactionId = null)
         {
             return new PlantMgmtResponse
             {
                 Success = true,
-                Message = message
+                Message = message,
+                TransactionId = transactionId
             };
         }
 
@@ -45,7 +41,6 @@ namespace OnionDlx.SolPwr.Dto
 
         public PlantMgmtResponse()
         {
-            ErrorInfo = Array.Empty<(string, string)>();
         }
     }
 }

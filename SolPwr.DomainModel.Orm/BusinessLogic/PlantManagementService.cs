@@ -37,7 +37,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
                 };
 
                 context.PowerPlants.Add(plant);
-                return CommandResult.Create(PlantMgmtResponse.CreateSuccess("OK").WithId(plant.Id), true);
+                return CommandResult.Create(PlantMgmtResponse.CreateSuccess("OK", Guid.NewGuid()).WithId(plant.Id), true);
             });
 
             // Make sure we start feeding power data in the worker thread
@@ -54,7 +54,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
                 var target = from plant in context.PowerPlants where plant.Id == identity select plant;
                 if (!target.Any())
                 {
-                    //return PlantMgmtResponse.CreateFaulted("Plant not found");
+                    // From an API perspective, this is a success (idempotent operation)
                     return CommandResult.Create(PlantMgmtResponse.CreateSuccess("Plant not found"));
                 }
 
@@ -64,7 +64,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
                 modify.PowerCapacity = dtoRegister.PowerCapacity;
                 modify.Location = dtoRegister.Location;
 
-                return CommandResult.Create(PlantMgmtResponse.CreateSuccess(identity.ToString()), true);
+                return CommandResult.Create(PlantMgmtResponse.CreateSuccess(identity.ToString(), Guid.NewGuid()), true);
             });
         }
 
@@ -76,6 +76,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
                 var target = from plant in context.PowerPlants where plant.Id == identity select plant;
                 if (!target.Any())
                 {
+                    // From an API perspective, this is a success (idempotent operation)
                     return CommandResult.Create(PlantMgmtResponse.CreateSuccess("Plant not found"));
                 }
 
@@ -84,7 +85,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
                 context.GenerationHistory.RemoveRange(history);
                 context.PowerPlants.Remove(modify);
 
-                return CommandResult.Create(PlantMgmtResponse.CreateSuccess(identity.ToString()), true);
+                return CommandResult.Create(PlantMgmtResponse.CreateSuccess(identity.ToString(), Guid.NewGuid()), true);
             });
         }
 
@@ -166,7 +167,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
                     counter++;
                 }
 
-                return CommandResult.Create(PlantMgmtResponse.CreateSuccess(counter.ToString()), true);
+                return CommandResult.Create(PlantMgmtResponse.CreateSuccess(counter.ToString(), Guid.NewGuid()), true);
             });
         }
 

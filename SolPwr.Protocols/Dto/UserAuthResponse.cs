@@ -6,14 +6,8 @@ using System.Threading.Tasks;
 
 namespace OnionDlx.SolPwr.Dto
 {
-    public class UserAuthResponse : IDataTransferObject
+    public class UserAuthResponse : ApiResponse
     {
-        public bool Success { get; set; }   
-
-        public string Message { get; set; }
-
-        public IEnumerable<(string, string)> ErrorInfo { get; set; }
-
         public static UserAuthResponse CreateSuccess(string message)
         {
             return new UserAuthResponse
@@ -36,7 +30,6 @@ namespace OnionDlx.SolPwr.Dto
 
         public UserAuthResponse()
         {
-            ErrorInfo = Array.Empty<(string, string)>();
         }
     }
 }
