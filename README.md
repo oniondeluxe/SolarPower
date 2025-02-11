@@ -6,7 +6,7 @@ This is the results of the software development home task for Uprise.\
 ## Personal note
 
 The compilation of material serves two purposes:
-* To solve the tasks at hand, as given in the home task
+* To solve the tasks at hand, as given in the home assignment. 
 * To illustrate my programming style, and how I usually prefer to arrange Visual Studio projects
 
 ## Getting started
