@@ -163,7 +163,9 @@ Please note that the `MeteoService` configuration section has the value `open-me
 
 ## Logging
 
-Logging is not covered everywhere or on every level, but more like to illustrate some useful patterns.
+Logging is not covered everywhere or on every level, but more like to illustrate some useful patterns.  
+There is also a LinkedIn post to read, about this:  
+https://www.linkedin.com/posts/daniel-z-07868a24_javascript-programming-nodejs-activity-6898956619485462528-Z7xs?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAUVU9wBYfpttxgf_cVWjWKGLlje3SE6dAw
 
 
 ## Taxonomy
