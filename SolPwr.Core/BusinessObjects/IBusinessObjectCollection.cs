@@ -12,5 +12,7 @@ namespace OnionDlx.SolPwr.BusinessObjects
         void Add(T obj);
 
         void Remove(T obj);
+
+        void RemoveRange(IEnumerable<T> obj);
     }
 }

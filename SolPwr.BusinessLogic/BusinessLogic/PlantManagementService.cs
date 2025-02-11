@@ -18,8 +18,15 @@ namespace OnionDlx.SolPwr.BusinessLogic
         readonly IUtilitiesRepositoryFactory _repoFac;
         readonly ILogger<IPlantManagementService> _logger;
         readonly IMeteoLookupServiceCallback _meteoCallback;
-        readonly UnitOfWork<IUtilitiesRepository, Dto.PlantMgmtResponse> _dbMoniker;
+        readonly UnitOfWork<IUtilitiesRepository, Dto.PlantMgmtResponse> _agent;
 
+        private UnitOfWork<IUtilitiesRepository, Dto.PlantMgmtResponse> Agent
+        {
+            get
+            {
+                return _agent;
+            }
+        }
 
         private IUtilitiesRepositoryFactory Database
         {
@@ -32,11 +39,12 @@ namespace OnionDlx.SolPwr.BusinessLogic
 
         public async Task<Dto.PlantMgmtResponse> CreatePlantAsync(Dto.PowerPlant dtoRegister)
         {
-            var resultDto = await _dbMoniker.ExecuteCommandAsync((repo, cmd) =>
+            var newId = Guid.NewGuid();
+            var resultDto = await Agent.ExecuteCommandAsync((repo, cmd) =>
             {
                 var plant = new PowerPlant
                 {
-                    Id = Guid.NewGuid(),
+                    Id = newId,
                     UtcInstallDate = dtoRegister.UtcInstallDate,
                     PlantName = dtoRegister.PlantName,
                     PowerCapacity = dtoRegister.PowerCapacity,
@@ -45,6 +53,10 @@ namespace OnionDlx.SolPwr.BusinessLogic
 
                 repo.PowerPlants.Add(plant);
                 return cmd.AsSuccessful(true);
+            },
+            (dto) =>
+            {
+                dto.Id = newId;
             });
 
             // Make sure we start feeding power data in the worker thread
@@ -97,9 +109,27 @@ namespace OnionDlx.SolPwr.BusinessLogic
         }
 
 
-        public //async 
-            Task<Dto.PlantMgmtResponse> UpdatePlantAsync(Guid identity, Dto.PowerPlant dtoRegister)
+        public async Task<Dto.PlantMgmtResponse> UpdatePlantAsync(Guid identity, Dto.PowerPlant dtoRegister)
         {
+            return await Agent.ExecuteCommandAsync((repo, cmd) =>
+            {
+                var target = from plant in repo.PowerPlants where plant.Id == identity select plant;
+                if (!target.Any())
+                {
+                    // From an API/PUT perspective, this is a success (idempotent operation)
+                    return cmd.AsSuccessful($"Plant '{identity}' not found");
+                }
+
+                var modify = target.First();
+                modify.UtcInstallDate = dtoRegister.UtcInstallDate;
+                modify.PlantName = dtoRegister.PlantName;
+                modify.PowerCapacity = dtoRegister.PowerCapacity;
+                modify.Location = dtoRegister.Location;
+
+                return cmd.AsSuccessful(true);
+            });
+
+
             //return await _uow.ExecuteCommandAsync(context =>
             //{
             //    var target = from plant in context.PowerPlants where plant.Id == identity select plant;
@@ -118,13 +148,28 @@ namespace OnionDlx.SolPwr.BusinessLogic
             //    return CommandResult.Create(PlantMgmtResponse.CreateSuccess(identity.ToString(), Guid.NewGuid()), true);
             //});
 
-            return Task.FromResult<Dto.PlantMgmtResponse>(null);
         }
 
 
-        public // async 
-            Task<Dto.PlantMgmtResponse> DeletePlantAsync(Guid identity)
+        public async Task<Dto.PlantMgmtResponse> DeletePlantAsync(Guid identity)
         {
+            return await Agent.ExecuteCommandAsync((repo, cmd) =>
+            {
+                var target = from plant in repo.PowerPlants where plant.Id == identity select plant;
+                if (!target.Any())
+                {
+                    // From an API/PUT perspective, this is a success (idempotent operation)
+                    return cmd.AsSuccessful($"Plant '{identity}' not found");
+                }
+
+                var modify = target.First();
+                var history = from rec in repo.GenerationRecords where rec.PowerPlant.Id == identity select rec;
+                repo.GenerationRecords.RemoveRange(history);
+                repo.PowerPlants.Remove(modify);
+
+                return cmd.AsSuccessful(true);
+            });
+
             //return await _uow.ExecuteCommandAsync(context =>
             //{
             //    var target = from plant in context.PowerPlants where plant.Id == identity select plant;
@@ -141,8 +186,6 @@ namespace OnionDlx.SolPwr.BusinessLogic
 
             //    return CommandResult.Create(PlantMgmtResponse.CreateSuccess(identity.ToString(), Guid.NewGuid()), true);
             //});
-
-            return Task.FromResult<Dto.PlantMgmtResponse>(null);
         }
 
 
@@ -204,14 +247,38 @@ namespace OnionDlx.SolPwr.BusinessLogic
         }
 
 
-        public //async 
-            Task<Dto.PlantMgmtResponse> SeedPlantsAsync(int quartersBehind)
+        public async Task<Dto.PlantMgmtResponse> SeedPlantsAsync(int quartersBehind)
         {
-            //// We only go back in time
-            //if (quartersBehind <= 0)
-            //{
-            //    return PlantMgmtResponse.CreateFaulted("Invalid seed value");
-            //}
+            // We only go back in time
+            if (quartersBehind <= 0)
+            {
+                return Dto.PlantMgmtResponse.CreateFaulted("Invalid seed value");
+            }
+
+            return await Agent.ExecuteCommandAsync((repo, cmd) =>
+            {
+                var counter = 0;
+                var now = DateTime.UtcNow;
+                foreach (var plant in repo.PowerPlants)
+                {
+                    for (int i = quartersBehind; i > 0; i--)
+                    {
+                        var totalMinutes = 15 * i;
+                        var historyRec = new PowerGenerationRecord
+                        {
+                            Id = Guid.NewGuid(),
+                            PowerPlant = plant,
+                            UtcTimestamp = now.AddMinutes(-totalMinutes),
+                            PowerGenerated = Random.Shared.Next(0, 100) * plant.PowerCapacity / 100.0
+                        };
+
+                        repo.GenerationRecords.Add(historyRec);
+                    }
+                    counter++;
+                }
+
+                return cmd.AsSuccessful(counter.ToString(), true);
+            });
 
             //return await _uow.ExecuteCommandAsync(context =>
             //{
@@ -238,7 +305,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
             //    return CommandResult.Create(PlantMgmtResponse.CreateSuccess(counter.ToString(), Guid.NewGuid()), true);
             //});
 
-            return Task.FromResult<Dto.PlantMgmtResponse>(null);
+            //return Task.FromResult<Dto.PlantMgmtResponse>(null);
         }
 
 
@@ -329,7 +396,8 @@ namespace OnionDlx.SolPwr.BusinessLogic
 
             // Setup the connection between the Persistence contracts and our Dto contracts, 
             // with logging as an aspect
-            _dbMoniker = _repoFac.CreateUow(_logger).For<Dto.PlantMgmtResponse>();
+            var dtoFactory = new DtoFactory<Dto.PlantMgmtResponse>();
+            _agent = _repoFac.CreateUow(_logger).For(dtoFactory);
 
             // Subscribe to events coming from the outer worker
             _meteoCallback = factory;

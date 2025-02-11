@@ -35,4 +35,35 @@ namespace OnionDlx.SolPwr.BusinessLogic
             Payload = payload;
         }
     }
+
+
+
+    public abstract class CommandResultOLD
+    {
+        public abstract bool PendingChanges { get; }
+
+        public static CommandResultOLD<T> Create<T>(T payload) where T : ITransactionalDto
+        {
+            return new CommandResultOLD<T>(payload);
+        }
+    }
+
+
+    public class CommandResultOLD<T> : CommandResultOLD where T : ITransactionalDto
+    {
+        public T Payload { get; init; }
+
+        public override bool PendingChanges
+        {
+            get
+            {
+                return Payload.TransactionId.HasValue;
+            }
+        }
+
+        internal CommandResultOLD(T payload)
+        {
+            Payload = payload;
+        }
+    }
 }

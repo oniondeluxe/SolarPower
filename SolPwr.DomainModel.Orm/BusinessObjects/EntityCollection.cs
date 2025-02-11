@@ -32,6 +32,16 @@ namespace OnionDlx.SolPwr.BusinessObjects
         }
 
 
+        public void RemoveRange(IEnumerable<T> obj)
+        {
+            _dataSet.RemoveRange(obj);
+
+            // Logging will only take place when we know we are saving
+            _owner.AddPendingLogMessage($"Removed {obj.Count()} instances");
+            _owner.SetDirty(this);
+        }
+
+
         public void Remove(T obj)
         {
             _dataSet.Remove(obj);
