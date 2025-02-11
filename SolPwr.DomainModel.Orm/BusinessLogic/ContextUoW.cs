@@ -37,46 +37,23 @@ namespace OnionDlx.SolPwr.BusinessLogic
         }
 
 
-        public async Task<PlantMgmtResponse> ExecuteCommandWithId(Func<UtilitiesContext, Guid?> onExecute)
+        public async Task<PlantMgmtResponse> ExecuteCommandAsync(Func<UtilitiesContext, CommandResult<PlantMgmtResponse>> onExecute)
         {
             try
             {
-                Guid? id;
                 using (var context = new UtilitiesContext(_connString))
                 {
-                    id = onExecute(context);
-                    await context.SaveChangesAsync();
-                }
-
-                if (id.HasValue)
-                {
-                    return PlantMgmtResponse.CreateSuccess("OK").WithId(id.Value);
-                }
-
-                return PlantMgmtResponse.CreateSuccess("OK");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                return PlantMgmtResponse.CreateFaulted(ex.Message);
-            }
-        }
-
-
-        public async Task<PlantMgmtResponse> ExecuteCommand(Func<UtilitiesContext, PlantMgmtResponse> onExecute)
-        {
-            try
-            {
-                PlantMgmtResponse errResponse;
-                using (var context = new UtilitiesContext(_connString))
-                {
-                    errResponse = onExecute(context);
+                    var errResponse = onExecute(context);
                     if (errResponse != null)
                     {
-                        return errResponse;
-                    }
+                        if (!errResponse.PendingChanges)
+                        {
+                            return errResponse.Payload;
+                        }
 
-                    await context.SaveChangesAsync();
+                        await context.SaveChangesAsync();
+                        return errResponse.Payload;
+                    }
                 }
 
                 return PlantMgmtResponse.CreateSuccess("OK");

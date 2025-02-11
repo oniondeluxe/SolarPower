@@ -74,7 +74,7 @@ To create a new plant, use this **POST**
 Fill in the body according to this example:  
 ```
 {
-    "id": "F530A983-3DAA-44B7-8AFC-74A5994967F6",
+    "id": "*",
     "plantName": "Plant API",
     "utcInstallDate": "2025-02-09T09:40:00",
     "location": {

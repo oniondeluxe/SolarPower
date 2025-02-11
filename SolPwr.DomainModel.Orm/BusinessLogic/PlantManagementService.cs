@@ -25,7 +25,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
         public async Task<PlantMgmtResponse> CreatePlantAsync(PowerPlant dtoRegister)
         {
             // Bump the database
-            var plantId = await _uow.ExecuteCommandWithId(context =>
+            var plantId = await _uow.ExecuteCommandAsync(context =>
             {
                 var plant = new BusinessObjects.PowerPlant
                 {
@@ -37,7 +37,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
                 };
 
                 context.PowerPlants.Add(plant);
-                return plant.Id;
+                return CommandResult.Create(PlantMgmtResponse.CreateSuccess("OK").WithId(plant.Id), true);
             });
 
             // Make sure we start feeding power data in the worker thread
@@ -49,12 +49,13 @@ namespace OnionDlx.SolPwr.BusinessLogic
 
         public async Task<PlantMgmtResponse> UpdatePlantAsync(Guid identity, PowerPlant dtoRegister)
         {
-            return await _uow.ExecuteCommand(context =>
+            return await _uow.ExecuteCommandAsync(context =>
             {
                 var target = from plant in context.PowerPlants where plant.Id == identity select plant;
                 if (!target.Any())
                 {
-                    return PlantMgmtResponse.CreateFaulted("Plant not found");
+                    //return PlantMgmtResponse.CreateFaulted("Plant not found");
+                    return CommandResult.Create(PlantMgmtResponse.CreateSuccess("Plant not found"));
                 }
 
                 var modify = target.First();
@@ -62,26 +63,28 @@ namespace OnionDlx.SolPwr.BusinessLogic
                 modify.PlantName = dtoRegister.PlantName;
                 modify.PowerCapacity = dtoRegister.PowerCapacity;
                 modify.Location = dtoRegister.Location;
-                return null;
+
+                return CommandResult.Create(PlantMgmtResponse.CreateSuccess(identity.ToString()), true);
             });
         }
 
 
         public async Task<PlantMgmtResponse> DeletePlantAsync(Guid identity)
         {
-            return await _uow.ExecuteCommand(context =>
+            return await _uow.ExecuteCommandAsync(context =>
             {
                 var target = from plant in context.PowerPlants where plant.Id == identity select plant;
                 if (!target.Any())
                 {
-                    return PlantMgmtResponse.CreateFaulted("Plant not found");
+                    return CommandResult.Create(PlantMgmtResponse.CreateSuccess("Plant not found"));
                 }
 
                 var modify = target.First();
                 var history = from rec in context.GenerationHistory where rec.PowerPlant.Id == identity select rec;
                 context.GenerationHistory.RemoveRange(history);
                 context.PowerPlants.Remove(modify);
-                return null;
+
+                return CommandResult.Create(PlantMgmtResponse.CreateSuccess(identity.ToString()), true);
             });
         }
 
@@ -141,8 +144,9 @@ namespace OnionDlx.SolPwr.BusinessLogic
                 return PlantMgmtResponse.CreateFaulted("Invalid seed value");
             }
 
-            return await _uow.ExecuteCommand(context =>
+            return await _uow.ExecuteCommandAsync(context =>
             {
+                var counter = 0;
                 var now = DateTime.UtcNow;
                 foreach (var plant in context.PowerPlants)
                 {
@@ -159,8 +163,10 @@ namespace OnionDlx.SolPwr.BusinessLogic
 
                         context.GenerationHistory.Add(historyRec);
                     }
+                    counter++;
                 }
-                return null;
+
+                return CommandResult.Create(PlantMgmtResponse.CreateSuccess(counter.ToString()), true);
             });
         }
 
