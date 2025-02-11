@@ -9,25 +9,30 @@ namespace OnionDlx.SolPwr.Services
 {
     public abstract class CommandResult
     {
-        public abstract bool PendingChanges { get; set; }
+        public abstract bool PendingChanges { get; }
 
-        public static CommandResult<T> Create<T>(T payload, bool commit = false) where T : IDataTransferObject
+        public static CommandResult<T> Create<T>(T payload) where T : ITransactionalDto
         {
-            return new CommandResult<T>(payload, commit);
+            return new CommandResult<T>(payload);
         }
     }
 
 
-    public class CommandResult<T> : CommandResult where T : IDataTransferObject
+    public class CommandResult<T> : CommandResult where T : ITransactionalDto
     {
-        public override bool PendingChanges { get; set; }
-
         public T Payload { get; init; }
 
-        internal CommandResult(T payload, bool pendingChanges)
+        public override bool PendingChanges
+        {
+            get
+            {
+                return Payload.TransactionId.HasValue;
+            }
+        }
+
+        internal CommandResult(T payload)
         {
             Payload = payload;
-            PendingChanges = pendingChanges;
         }
     }
 }
