@@ -8,11 +8,6 @@ namespace OnionDlx.SolPwr.BusinessObjects
 {
     public interface IBusinessObjectRepository : IDisposable
     {
-    //}
-
-
-    //public interface IMutableBusinessObjectRepository : IBusinessObjectRepository
-    //{
         Guid? SaveChanges();
 
         Task<Guid?> SaveChangesAsync();

@@ -18,6 +18,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
         readonly IUtilitiesRepositoryFactory _repoFac;
         readonly ILogger<IPlantManagementService> _logger;
         readonly IMeteoLookupServiceCallback _meteoCallback;
+        readonly UnitOfWork<IUtilitiesRepository, Dto.PlantMgmtResponse> _dbMoniker;
 
 
         private IUtilitiesRepositoryFactory Database
@@ -29,11 +30,50 @@ namespace OnionDlx.SolPwr.BusinessLogic
         }
 
 
-        public //async 
-            Task<Dto.PlantMgmtResponse> CreatePlantAsync(Dto.PowerPlant dtoRegister)
+        public async Task<Dto.PlantMgmtResponse> CreatePlantAsync(Dto.PowerPlant dtoRegister)
         {
+            var resultDto = await _dbMoniker.ExecuteCommandAsync((repo, cmd) =>
+            {
+                var plant = new PowerPlant
+                {
+                    Id = Guid.NewGuid(),
+                    UtcInstallDate = dtoRegister.UtcInstallDate,
+                    PlantName = dtoRegister.PlantName,
+                    PowerCapacity = dtoRegister.PowerCapacity,
+                    Location = dtoRegister.Location
+                };
+
+                repo.PowerPlants.Add(plant);
+                return cmd.AsSuccessful(true);
+            });
+
+            // Make sure we start feeding power data in the worker thread
+            await _meteoCallback.GetEndpoint()?.StartFeedAsync(resultDto.Id.Value, dtoRegister.Location);
+
+            return resultDto;
+
+
+            using (var repo = Database.NewCommand())
+            {
+                var plant = new PowerPlant
+                {
+                    Id = Guid.NewGuid(),
+                    UtcInstallDate = dtoRegister.UtcInstallDate,
+                    PlantName = dtoRegister.PlantName,
+                    PowerCapacity = dtoRegister.PowerCapacity,
+                    Location = dtoRegister.Location
+                };
+
+                repo.PowerPlants.Add(plant);
+                var trx = await repo.SaveChangesAsync();
+
+                return Dto.PlantMgmtResponse.CreateSuccess("OK", trx).WithId(plant.Id);
+            }
+
+
+
             //// Bump the database
-            //var plantId = await _uow.ExecuteCommandAsync(context =>
+            //var plantDto = await _uow.ExecuteCommandAsync(context =>
             //{
             //    var plant = new BusinessObjects.PowerPlant
             //    {
@@ -45,15 +85,15 @@ namespace OnionDlx.SolPwr.BusinessLogic
             //    };
 
             //    context.PowerPlants.Add(plant);
-            //    return CommandResult.Create(PlantMgmtResponse.CreateSuccess("OK", Guid.NewGuid()).WithId(plant.Id), true);
+            //    return CommandResult.Create(PlantMgmtResponse.CreateSuccess("OK", Guid.NewGuid()).WithId(plantDto.Id), true);
             //});
 
             //// Make sure we start feeding power data in the worker thread
-            //await _meteoCallback.GetEndpoint()?.StartFeedAsync(plantId.Id.Value, dtoRegister.Location);
+            //await _meteoCallback.GetEndpoint()?.StartFeedAsync(plantDto.Id.Value, dtoRegister.Location);
 
             //return plantId;
 
-            return Task.FromResult<Dto.PlantMgmtResponse>(null);
+            // return null; // Task.FromResult<Dto.PlantMgmtResponse>(null);
         }
 
 
@@ -286,6 +326,10 @@ namespace OnionDlx.SolPwr.BusinessLogic
         {
             _logger = logger;
             _repoFac = repo;
+
+            // Setup the connection between the Persistence contracts and our Dto contracts, 
+            // with logging as an aspect
+            _dbMoniker = _repoFac.CreateUow(_logger).For<Dto.PlantMgmtResponse>();
 
             // Subscribe to events coming from the outer worker
             _meteoCallback = factory;

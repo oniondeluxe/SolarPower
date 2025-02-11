@@ -36,9 +36,31 @@ namespace OnionDlx.SolPwr.BusinessObjects
 
         #endregion
 
+        Guid? _pendingTransactionId;
+
+        public void SetDirty(object invoker)
+        {
+            if (!_pendingTransactionId.HasValue)
+            {
+                _pendingTransactionId = Guid.NewGuid();
+            }
+        }
+
+
         protected virtual Guid? GetTransactionID()
         {
-            return null;
+            return _pendingTransactionId;
+        }
+
+
+        public void AddPendingLogMessage(string message)
+        {
+
+        }
+
+
+        protected void FlushLogMessages()
+        {
         }
 
 

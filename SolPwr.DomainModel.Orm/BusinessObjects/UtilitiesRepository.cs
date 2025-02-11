@@ -58,6 +58,7 @@ namespace OnionDlx.SolPwr.BusinessObjects
         public override Guid? SaveChanges()
         {
             _dbContext.SaveChanges();
+            FlushLogMessages();
 
             return GetTransactionID();
         }
@@ -66,6 +67,7 @@ namespace OnionDlx.SolPwr.BusinessObjects
         public override async Task<Guid?> SaveChangesAsync()
         {
             await _dbContext.SaveChangesAsync();
+            FlushLogMessages();
 
             return GetTransactionID();
         }
@@ -93,7 +95,7 @@ namespace OnionDlx.SolPwr.BusinessObjects
             {
                 if (_powerPlants == null)
                 {
-                    _powerPlants = new EntityCollection<PowerPlant>(_dbContext.PowerPlants, _logger);
+                    _powerPlants = new EntityCollection<PowerPlant>(_dbContext.PowerPlants, this);
                 }
 
                 return _powerPlants;
@@ -108,7 +110,7 @@ namespace OnionDlx.SolPwr.BusinessObjects
             {
                 if (_generationRecords == null)
                 {
-                    _generationRecords = new EntityCollection<PowerGenerationRecord>(_dbContext.GenerationHistory, _logger);
+                    _generationRecords = new EntityCollection<PowerGenerationRecord>(_dbContext.GenerationHistory, this);
                 }
 
                 return _generationRecords;

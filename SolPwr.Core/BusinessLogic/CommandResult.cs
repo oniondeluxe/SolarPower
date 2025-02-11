@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OnionDlx.SolPwr.Services
+namespace OnionDlx.SolPwr.BusinessLogic
 {
     public abstract class CommandResult
     {
