@@ -12,25 +12,25 @@ The compilation of material serves two purposes:
 ## Getting started
 
 After cloning the material to a local disk, the following steps should be carried out:  
-1 Use a client connection to an MS SQL database (I used MS SQL Server Management Studio), and run the scripts in the folder:  
+1. Use a client connection to an MS SQL database (I used MS SQL Server Management Studio), and run the scripts in the folder:  
 
 `$/SQL/DDL`  
 
 Some paths in the local file system might have to be modified first (good to know for people still using floppy disk drives).  
 
-2 Open Visual Studio, and run the NuGet package manager console. Set the default project to `SolPwr.DomainModel.Orm`.  
+2. Open Visual Studio, and run the NuGet package manager console. Set the default project to `SolPwr.DomainModel.Orm`.  
 Run:  
 ```PowerShell
 Update-Database -context UtilitiesContext 
 ```  
 
-3 Still in the NuGet package manager console, switch the default project to `SolPwr.AuthModel`.  
+3. Still in the NuGet package manager console, switch the default project to `SolPwr.AuthModel`.  
 Run:  
 ```PowerShell
 Update-Database -context AuthIdentityContext
 ```  
 
-4 Now, the application can be fired up. 
+4. Now, the application can be fired up. 
 
 ## Using the API
 
