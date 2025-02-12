@@ -167,7 +167,7 @@ Please note that the `MeteoService` configuration section has the value `open-me
 Logging is not covered everywhere or on every level, but more like to illustrate some useful patterns.  
 
 For instance, the class  
-```
+```C#
 UnitOfWork<T, D>
 ```  
 Has logging implemented as an aspect.  
@@ -185,7 +185,7 @@ Please note that namespaces are in general orthogonal to the names of the projec
 
 An example: The namespace  
 
-```
+```C#
 namespace OnionDlx.SolPwr.BusinessObjects
 ```  
 
