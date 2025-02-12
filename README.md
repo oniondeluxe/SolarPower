@@ -1,6 +1,6 @@
 # SolarPower
 
-This is the results of the software development home task for Uprise.\
+This is a .NET Core tidbit solution for a Web API that simulates solar power plants.  
 &copy; 2025 Daniel Žagar
 
 ## Personal note
