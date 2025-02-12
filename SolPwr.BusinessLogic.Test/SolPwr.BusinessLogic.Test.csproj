@@ -25,6 +25,7 @@
     <ProjectReference Include="..\SolPwr.Core\SolPwr.Core.csproj" />
     <ProjectReference Include="..\SolPwr.DomainModel\SolPwr.DomainModel.csproj" />
     <ProjectReference Include="..\SolPwr.Protocols\SolPwr.Protocols.csproj" />
+    <ProjectReference Include="..\SolPwr.TestingUtils\SolPwr.TestingUtils.csproj" />
   </ItemGroup>
 
   <ItemGroup>
