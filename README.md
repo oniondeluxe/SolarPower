@@ -154,14 +154,13 @@ For test purposes, existing plants can be seeded back in time with random data, 
 ## Component structure
 
 Separation of concerns was a driving factor for the component architecture, with the following characteristics:  
-1 The dependency injection and configuration of containers, is forwarded to extension methods in corresponding sub system. This will hide details from `Program.cs` and keep it clean and tidy as well.  
-2 The ORM data layer is in general separated from the Dto data layer.  
-3 The authentication and authorization part is separated from the rest of the application, and also with respect to backing storage. Two different SQL schemes were used to keep track of that separation in the very database (`spu` and `spa`), instead of the commonly used `dbo`.  
-4 The part that concerns a dependency to a specific RDBMS is kept in the projects with suffixes Orm. In this case, there is a dependency to MsSql Server there, but not elsewhere.  
+1. The dependency injection and configuration of containers, is forwarded to extension methods in corresponding sub system. This will hide details from `Program.cs` and keep it clean and tidy as well.  
+2. The ORM data layer is in general separated from the Dto data layer.  
+3. The authentication and authorization part is separated from the rest of the application, and also with respect to backing storage. Two different SQL schemes were used to keep track of that separation in the very database (`spu` and `spa`), instead of the commonly used `dbo`.  
+4. The part that concerns a dependency to a specific RDBMS is kept in the projects with suffixes Orm. In this case, there is a dependency to MsSql Server there, but not elsewhere.  
+5. The part which is handling the connectivity to a meteorological service, is implemented using a plugin architecture. It means that the application can dynamically handle various meteorological services (one at a time), if so desired. The `appsettings.json` contains a section which will point out what provider should be used at runtime. An assembly scoped attribute is used inside the plugin project to tag the DLL for plugin identification. Only one provider is implemented, though (www.open-meteo.com).  
 
-The part which is handling the connectivity to a meteorological service, is implemented using a plugin architecture. It means that the application can dynamically handle various meteorological services (one at a time), if so desired. The `appsettings.json` contains a section which will point out what provider should be used at runtime. An assembly scoped attribute is used inside the plugin project to tag the DLL for plugin identification. Only one provider is implemented, though (www.open-meteo.com).  
-
-Please note that the `MeteoService` configuration section has the value `open-meteo.com`. That is the name of the plugin identifier, and has nothing to do with the URL to that very meteo service. In fact, any name could have been used there.
+_Please note that the_ `MeteoService` _configuration section has the value_ `open-meteo.com`. _That is the name of the plugin identifier, and has nothing to do with the URL to that very meteo service. In fact, any name could have been used there._
 
 ## VS Projects
 
