@@ -9,6 +9,7 @@ The compilation of material serves two purposes:
 * To solve the tasks at hand, as given in the home assignment. 
 * To illustrate my programming style, and how I usually prefer to arrange Visual Studio projects
 
+
 ## Getting started
 
 After cloning the material to a local disk, the following steps should be carried out:  
@@ -31,6 +32,19 @@ Update-Database -context AuthIdentityContext
 ```  
 
 4. Now, the application can be fired up. 
+
+## The lazy way
+
+If you don't want to run everything all the way, a testing approach can be used to illustrate the main principles and concepts.
+
+In the test project `SolPwr.BusinessLogic.Test` there is one unit test:  
+
+```C#
+CrudTests.PrePopulated_SelectAll_Success()
+```  
+
+Execute, or debug at your own discretion.
+
 
 ## Using the API
 
@@ -154,6 +168,7 @@ Please note that the `MeteoService` configuration section has the value `open-me
 | `SolPwr.Application.Api` | The main REST executable |
 | `SolPwr.Core` | Contains base classes and various primitives |
 | `SolPwr.BusinessLogic` | This is where things are stitched together |
+| `SolPwr.BusinessLogic.Test` | Unit tests for the business logic |
 | `SolPwr.DomainModel` | Domain classes for code first |
 | `SolPwr.DomainModel.Orm` | The Entity Framework implementation |
 | `SolPwr.AuthModel` | The identity implementation using JWT |
@@ -201,4 +216,4 @@ Some shortcuts have been taken to limit the scope, and to stay on focus
 2 The instantatation of the `IntegrationEndpoint` and the plugin loader with the `IBackgroundWorker`pattern, might be a bit inside-out. Could be refactored to become more straightforward. But, as this is beyond the programming task anyway, I'll leave it like that.  
 3 When asking for 15 min data points, some interpolation needs to take place. This is not implemented.  
 4 SQL Migrations should be generated as standalone SQL script files, so that they could be run in a more generic setup. Now, the NuGet package manager has to be used interactively. And also, a more robust DB versioning mechanism, including startup check, would be needed in a real system.  
-5 And, of course the obvious - no test projects are included.  
+5 And, of course the obvious - much more test coverage is needed.  
