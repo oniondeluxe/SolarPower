@@ -16,6 +16,8 @@ namespace OnionDlx.SolPwr.BusinessObjects
         readonly DbSet<T> _dataSet;
         readonly BusinessObjectRepository _owner;
 
+        #region IQueryable
+
         Type IQueryable.ElementType
         {
             get
@@ -42,6 +44,7 @@ namespace OnionDlx.SolPwr.BusinessObjects
             }
         }
 
+        #endregion
 
         public async Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
         {
