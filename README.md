@@ -37,10 +37,12 @@ Update-Database -context AuthIdentityContext
 
 If you don't want to run everything all the way, a testing approach can be used to illustrate the main principles and concepts.
 
-In the test project `SolPwr.BusinessLogic.Test` there is one unit test:  
+In the test project `SolPwr.BusinessLogic.Test` there are two unit tests:  
 
 ```C#
 CrudTests.PrePopulated_SelectAll_Success()
+
+CrudTests.Empty_CreateOne_Success()
 ```  
 
 Execute, or debug at your own discretion.

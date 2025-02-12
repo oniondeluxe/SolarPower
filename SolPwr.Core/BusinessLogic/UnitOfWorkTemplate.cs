@@ -36,7 +36,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
 
     public static class UnitOfWorkExtensions
     {
-        public static UnitOfWorkTemplate<T> CreateUow<T>(this IRepositoryFactory<T> input, ILogger logger)
+        public static UnitOfWorkTemplate<T> CreateUoW<T>(this IRepositoryFactory<T> input, ILogger logger)
          where T : IBusinessObjectRepository
         {
             return new UnitOfWorkTemplate<T>(input, logger);

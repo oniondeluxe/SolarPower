@@ -279,7 +279,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
             {
                 return new Dto.PlantMgmtResponse { TransactionId = guid };
             });
-            _agent = _repoFac.CreateUow(_logger).For(dtoFactory);
+            _agent = _repoFac.CreateUoW(_logger).For(dtoFactory);
 
             // Subscribe to events coming from the outer worker
             _meteoCallback = factory;
