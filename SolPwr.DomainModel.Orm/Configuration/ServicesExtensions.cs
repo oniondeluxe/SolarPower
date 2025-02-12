@@ -14,7 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace OnionDlx.SolPwr.Configuration
-{  
+{
     public static class ServicesOrmExtensions
     {
         /// <summary>
@@ -24,6 +24,9 @@ namespace OnionDlx.SolPwr.Configuration
         /// <returns></returns>
         public static IServiceCollection AddPersistence(this IServiceCollection coll, string connString)
         {
+            // As originating from a static method, this is what we need to do
+            Extensions.RequestConvert += Extensions_RequestConvert;
+
             coll.AddDbContext<UtilitiesContext>(options => options.UseSqlServer(connString));
             coll.AddScoped<IUtilitiesRepositoryFactory>(provider =>
             {
@@ -33,5 +36,39 @@ namespace OnionDlx.SolPwr.Configuration
 
             return coll;
         }
+
+
+        private static void Extensions_RequestConvert(object sender, ConverterEventArgs e)
+        {
+            if (e != null)
+            {
+                // Trick
+                e.Converter = new EntityQueryConverter();
+            }
+        }
+
+
+        class EntityQueryConverter : IConverter
+        {
+            public EntityQueryConverter()
+            {
+            }
+
+
+            public Task<List<T>> GetToListAsync<T>(IQueryable<T> coll) where T : IBusinessObject
+            {
+                return EntityFrameworkQueryableExtensions.ToListAsync(coll);
+            }
+
+
+            public Task<T> GetFirstOrDefaultAsync<T>(IQueryable<T> coll) where T : IBusinessObject
+            {
+                // EF is not reachable from the pure domain layer
+                return EntityFrameworkQueryableExtensions.FirstOrDefaultAsync(coll);
+            }
+        }
     }
+
+
+
 }

@@ -65,5 +65,22 @@ namespace OnionDlx.SolPwr.BusinessLogic
 
             return response;
         }
+
+
+        public async Task<IEnumerable<P>> ExecuteQueryAsync<P>(Func<T, Task<IEnumerable<P>>> onExecute) where P : IDataTransferObject
+        {
+            try
+            {
+                using (var repo = _input.NewQuery())
+                {
+                    return await onExecute(repo);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return Array.Empty<P>();
+            }
+        }
     }
 }

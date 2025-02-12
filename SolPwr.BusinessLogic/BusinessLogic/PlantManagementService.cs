@@ -121,7 +121,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
                 }
             }
 
-            return result; 
+            return result;
         }
 
 
@@ -182,33 +182,32 @@ namespace OnionDlx.SolPwr.BusinessLogic
                 }
 
                 return cmd.AsSuccessful(counter.ToString(), true);
-            });          
+            });
         }
 
 
-        public // async 
-            Task<IEnumerable<Dto.PlantPowerData>> GetPowerDataAsync(Guid identity, PowerDataTypes type, TimeResolution resol, TimeSpanCode code, int timeSpan)
+        public async Task<IEnumerable<Dto.PlantPowerData>> GetPowerDataAsync(Guid identity, PowerDataTypes type, TimeResolution resol, TimeSpanCode code, int timeSpan)
         {
-            /*
             // History: we read from the stored data
             if (type == PowerDataTypes.History)
             {
-                return await _uow.ExecuteQueryAsync<PlantPowerData>(async context =>
+                return await Agent.ExecuteQueryAsync<Dto.PlantPowerData>(async (context) =>
                 {
-                    // We don't include the history records in the query yet
                     var plants = from p in context.PowerPlants
                                  where p.Id == identity
                                  select p;
+                    var ppT = plants.GetType();
+
                     var currentPlant = await plants.FirstOrDefaultAsync();
                     if (currentPlant != null)
                     {
-                        var result = new List<PlantPowerData>();
-                        var history = from hist in context.GenerationHistory
+                        var result = new List<Dto.PlantPowerData>();
+                        var history = from hist in context.GenerationRecords
                                       where hist.PowerPlant.Id == currentPlant.Id
                                       select hist;
                         foreach (var histItem in await history.ToListAsync())
                         {
-                            result.Add(new PlantPowerData
+                            result.Add(new Dto.PlantPowerData
                             {
                                 PlantId = currentPlant.Id,
                                 CurrentPower = histItem.PowerGenerated,
@@ -220,12 +219,46 @@ namespace OnionDlx.SolPwr.BusinessLogic
                     }
                     else
                     {
-                        return Array.Empty<PlantPowerData>();
+                        return Array.Empty<Dto.PlantPowerData>();
                     }
                 });
+
+
+                //return await _uow.ExecuteQueryAsync<PlantPowerData>(async context =>
+                //{
+                //    // We don't include the history records in the query yet
+                //    var plants = from p in context.PowerPlants
+                //                 where p.Id == identity
+                //                 select p;
+                //    var currentPlant = await plants.FirstOrDefaultAsync();
+                //    if (currentPlant != null)
+                //    {
+                //        var result = new List<PlantPowerData>();
+                //        var history = from hist in context.GenerationHistory
+                //                      where hist.PowerPlant.Id == currentPlant.Id
+                //                      select hist;
+                //        foreach (var histItem in await history.ToListAsync())
+                //        {
+                //            result.Add(new PlantPowerData
+                //            {
+                //                PlantId = currentPlant.Id,
+                //                CurrentPower = histItem.PowerGenerated,
+                //                UtcTime = histItem.UtcTimestamp
+                //            });
+                //        }
+
+                //        return result;
+                //    }
+                //    else
+                //    {
+                //        return Array.Empty<PlantPowerData>();
+                //    }
+                //});
             }
+
             else if (type == PowerDataTypes.Forecast)
             {
+                /*
                 // Forecast, we ask the meteo service
                 var meteo = _meteoCallback.GetEndpoint();
 
@@ -258,11 +291,12 @@ namespace OnionDlx.SolPwr.BusinessLogic
                         return result;
                     }
                 }
+                */
             }
-            */
+
 
             // Nothing ordered, or nothing found
-            return Task.FromResult<IEnumerable<Dto.PlantPowerData>>(Array.Empty<Dto.PlantPowerData>());
+            return null; // Task.FromResult<IEnumerable<Dto.PlantPowerData>>(Array.Empty<Dto.PlantPowerData>());
         }
 
 
