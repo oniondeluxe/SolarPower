@@ -172,7 +172,7 @@ UnitOfWork<T, D>
 ```  
 Has logging implemented as an aspect.  
 
-There is also a LinkedIn [LinkedIn](https://www.linkedin.com/posts/daniel-z-07868a24_javascript-programming-nodejs-activity-6898956619485462528-Z7xs?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAUVU9wBYfpttxgf_cVWjWKGLlje3SE6dAw) post to read, about logging in general.  
+There is also a [LinkedIn](https://www.linkedin.com/posts/daniel-z-07868a24_javascript-programming-nodejs-activity-6898956619485462528-Z7xs?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAUVU9wBYfpttxgf_cVWjWKGLlje3SE6dAw) post to read, about logging in general.  
 
 
 ## Taxonomy
