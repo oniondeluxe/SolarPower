@@ -153,6 +153,7 @@ Please note that the `MeteoService` configuration section has the value `open-me
 | ------- | ------- |
 | `SolPwr.Application.Api` | The main REST executable |
 | `SolPwr.Core` | Contains base classes and various primitives |
+| `SolPwr.BusinessLogic` | This is where things are stitched together |
 | `SolPwr.DomainModel` | Domain classes for code first |
 | `SolPwr.DomainModel.Orm` | The Entity Framework implementation |
 | `SolPwr.AuthModel` | The identity implementation using JWT |
@@ -164,6 +165,13 @@ Please note that the `MeteoService` configuration section has the value `open-me
 ## Logging
 
 Logging is not covered everywhere or on every level, but more like to illustrate some useful patterns.  
+
+For instance, the class  
+```
+UnitOfWork<T, D>
+```  
+Has logging implemented as an aspect.  
+
 There is also a LinkedIn post to read, about this:  
 https://www.linkedin.com/posts/daniel-z-07868a24_javascript-programming-nodejs-activity-6898956619485462528-Z7xs?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAUVU9wBYfpttxgf_cVWjWKGLlje3SE6dAw
 
@@ -188,9 +196,8 @@ The purpose of this, is to keep a separation between the logical object oriented
 ## Flaws, sources of improvements and other remarks
 
 Some shortcuts have been taken to limit the scope, and to stay on focus  
-1 The project `SolPwr.DomainModel.Orm` has two areas of responsibility, and thus has a dependency to both the Domain model and the Dto model. A better approach would have been to put a separate implementation in a different projects and use a pattern to support Entity Framework. For instance repository and/or unit of work.  
-2 The Tools controller and seeding API is not authorized, for testing convenience, but could very easily become so.  
-3 The instantatation of the `IntegrationEndpoint` and the plugin loader with the `IBackgroundWorker`pattern, might be a bit inside-out. Could be refactored to become more straightforward. But, as this is beyond the programming task anyway, I'll leave it like that.  
-4 When asking for 15 min data points, some interpolation needs to take place. This is not implemented.  
-5 SQL Migrations should be generated as standalone SQL script files, so that they could be run in a more generic setup. Now, the NuGet package manager has to be used interactively. And also, a more robust DB versioning mechanism, including startup check, would be needed in a real system.  
-6 And, of course the obvious - no test projects are included.  
+1 The Tools controller and seeding API is not authorized, for testing convenience, but could very easily become so.  
+2 The instantatation of the `IntegrationEndpoint` and the plugin loader with the `IBackgroundWorker`pattern, might be a bit inside-out. Could be refactored to become more straightforward. But, as this is beyond the programming task anyway, I'll leave it like that.  
+3 When asking for 15 min data points, some interpolation needs to take place. This is not implemented.  
+4 SQL Migrations should be generated as standalone SQL script files, so that they could be run in a more generic setup. Now, the NuGet package manager has to be used interactively. And also, a more robust DB versioning mechanism, including startup check, would be needed in a real system.  
+5 And, of course the obvious - no test projects are included.  

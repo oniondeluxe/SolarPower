@@ -127,27 +127,29 @@ namespace OnionDlx.SolPwr.BusinessLogic
 
         private void OnUpdateProductionData(IMeteoLookupService meteo)
         {
-            //var now = DateTime.UtcNow;
-            //var tempStorage = new List<(Guid, IList<MeteoData>)>();
-            //using (var context = new UtilitiesContext(_connString))
-            //{
-            //    // Go through all plants and find their location etc
-            //    var plants = from p in context.PowerPlants select p;
-            //    foreach (var plant in plants)
-            //    {
-            //        var mdList = new List<MeteoData>();
-            //        // Zero values means now
-            //        var data = meteo.GetMeteoDataAsync(plant.Location, TimeResolution.None, TimeSpanCode.None, 0).Result;
-            //        mdList.AddRange(data);
-            //        tempStorage.Add((plant.Id, mdList));
-            //    }
-            //}
+            var now = DateTime.UtcNow;
+            var tempStorage = new List<(Guid, IList<Dto.MeteoData>)>();
+            var res = Agent.ExecuteQueryAsync<Dto.MeteoData>(async (context) =>
+            {
+                // Go through all plants and find their location etc
+                var plants = from p in context.PowerPlants select p;
+                foreach (var plant in plants)
+                {
+                    var mdList = new List<Dto.MeteoData>();
+                    // Zero values means now
+                    var data = await meteo.GetMeteoDataAsync(plant.Location, TimeResolution.None, TimeSpanCode.None, 0);
+                    mdList.AddRange(data);
+                    tempStorage.Add((plant.Id, mdList));
+                }
 
-            //// Now, update the DB with these added rows
-            //foreach (var item in tempStorage)
-            //{
-            //    // TODO: Insert rows
-            //}
+                return null;
+            }).Result;
+
+            // Now, update the DB with these added rows
+            foreach (var item in tempStorage)
+            {
+                // TODO: Insert rows
+            }
         }
 
 
@@ -196,8 +198,6 @@ namespace OnionDlx.SolPwr.BusinessLogic
                     var plants = from p in context.PowerPlants
                                  where p.Id == identity
                                  select p;
-                    var ppT = plants.GetType();
-
                     var currentPlant = await plants.FirstOrDefaultAsync();
                     if (currentPlant != null)
                     {
@@ -222,48 +222,13 @@ namespace OnionDlx.SolPwr.BusinessLogic
                         return Array.Empty<Dto.PlantPowerData>();
                     }
                 });
-
-
-                //return await _uow.ExecuteQueryAsync<PlantPowerData>(async context =>
-                //{
-                //    // We don't include the history records in the query yet
-                //    var plants = from p in context.PowerPlants
-                //                 where p.Id == identity
-                //                 select p;
-                //    var currentPlant = await plants.FirstOrDefaultAsync();
-                //    if (currentPlant != null)
-                //    {
-                //        var result = new List<PlantPowerData>();
-                //        var history = from hist in context.GenerationHistory
-                //                      where hist.PowerPlant.Id == currentPlant.Id
-                //                      select hist;
-                //        foreach (var histItem in await history.ToListAsync())
-                //        {
-                //            result.Add(new PlantPowerData
-                //            {
-                //                PlantId = currentPlant.Id,
-                //                CurrentPower = histItem.PowerGenerated,
-                //                UtcTime = histItem.UtcTimestamp
-                //            });
-                //        }
-
-                //        return result;
-                //    }
-                //    else
-                //    {
-                //        return Array.Empty<PlantPowerData>();
-                //    }
-                //});
             }
-
             else if (type == PowerDataTypes.Forecast)
             {
-                /*
                 // Forecast, we ask the meteo service
                 var meteo = _meteoCallback.GetEndpoint();
 
-                // Find the plant in question first
-                using (var context = new UtilitiesContext(_connString))
+                return await Agent.ExecuteQueryAsync<Dto.PlantPowerData>(async (context) =>
                 {
                     var plants = from p in context.PowerPlants
                                  where p.Id == identity
@@ -271,7 +236,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
                     var currentPlant = await plants.FirstOrDefaultAsync();
                     if (currentPlant != null)
                     {
-                        var result = new List<PlantPowerData>();
+                        var result = new List<Dto.PlantPowerData>();
 
                         // Fake science - The latitude will influence how much power the sun will generate
                         var now = DateTime.UtcNow;
@@ -280,7 +245,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
                         {
                             var calc = new PowerCalculator(currentPlant.PowerCapacity, currentPlant.Location.Latitude);
                             var power = calc.GetCurrentPower(dp.WeatherCode, dp.Visibility);
-                            result.Add(new PlantPowerData
+                            result.Add(new Dto.PlantPowerData
                             {
                                 PlantId = currentPlant.Id,
                                 CurrentPower = power,
@@ -290,13 +255,15 @@ namespace OnionDlx.SolPwr.BusinessLogic
 
                         return result;
                     }
-                }
-                */
+                    else
+                    {
+                        return Array.Empty<Dto.PlantPowerData>();
+                    }
+                });
             }
 
-
             // Nothing ordered, or nothing found
-            return null; // Task.FromResult<IEnumerable<Dto.PlantPowerData>>(Array.Empty<Dto.PlantPowerData>());
+            return Array.Empty<Dto.PlantPowerData>();
         }
 
 

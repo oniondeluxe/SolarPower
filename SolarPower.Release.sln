@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolPwr.Integrations.Core", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolPwr.BusinessLogic", "SolPwr.BusinessLogic\SolPwr.BusinessLogic.csproj", "{F8A81AC0-5793-4FCE-A7DF-FE025FC9471C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolPwr.BusinessLogic.Test", "SolPwr.BusinessLogic.Test\SolPwr.BusinessLogic.Test.csproj", "{06185CBB-0546-4B6D-B125-0E0F1E1620BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{F8A81AC0-5793-4FCE-A7DF-FE025FC9471C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8A81AC0-5793-4FCE-A7DF-FE025FC9471C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8A81AC0-5793-4FCE-A7DF-FE025FC9471C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06185CBB-0546-4B6D-B125-0E0F1E1620BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06185CBB-0546-4B6D-B125-0E0F1E1620BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06185CBB-0546-4B6D-B125-0E0F1E1620BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06185CBB-0546-4B6D-B125-0E0F1E1620BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
