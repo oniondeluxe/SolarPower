@@ -6,9 +6,18 @@ using System.Threading.Tasks;
 
 namespace OnionDlx.SolPwr.BusinessObjects
 {
-    public interface IBusinessObjectRepository<T> : IEnumerable<T>
-        where T : IBusinessObject
+    public interface IBusinessObjectRepository : IDisposable
     {
-        // Not used
+        Guid? SaveChanges();
+
+        Task<Guid?> SaveChangesAsync();
+    }
+
+
+    public interface IRepositoryFactory<out T> where T : IBusinessObjectRepository
+    {
+        T NewQuery();
+
+        T NewCommand();
     }
 }

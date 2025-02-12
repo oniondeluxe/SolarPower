@@ -10,4 +10,6 @@ namespace OnionDlx.SolPwr.BusinessObjects
     {
         Guid Id { get; }
     }
+
+
 }

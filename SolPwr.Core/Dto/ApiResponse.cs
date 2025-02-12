@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OnionDlx.SolPwr.Dto
 {
-    public abstract class ApiResponse : IDataTransferObject
+    public abstract class ApiResponse : ITransactionalDto
     {
         [JsonPropertyName("success")]
         public bool Success { get; set; }

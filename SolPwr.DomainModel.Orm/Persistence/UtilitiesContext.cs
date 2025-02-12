@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,11 +22,9 @@ namespace OnionDlx.SolPwr.Persistence
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //base.OnConfiguring(optionsBuilder);
-
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(_connString); // "Server=.;Database=SolarPower;User Id=SolPwr;Password=SolPwr;MultipleActiveResultSets=true;TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer(_connString);
             }
         }
 

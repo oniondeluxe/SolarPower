@@ -5,6 +5,7 @@ namespace OnionDlx.SolPwr.Application.Services
     public class PlantOperationSpinner : IHostedService
     {
         public static bool Enabled { get; set; }
+        public static int IntervalSeconds { get; set; }
 
         private readonly ILogger<PlantOperationSpinner> _logger;
         private Timer _timer;
@@ -14,6 +15,12 @@ namespace OnionDlx.SolPwr.Application.Services
         {
             _logger = logger;
             _integrationProxy = integrationProxy;
+        }
+
+
+        static PlantOperationSpinner()
+        {
+            IntervalSeconds = 10;
         }
 
 
@@ -27,8 +34,8 @@ namespace OnionDlx.SolPwr.Application.Services
                     return Task.CompletedTask;
                 }
 
-                // This should not be run this often, but every 10 second is for illustration/debugging proposes
-                _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
+                // This should not be run this often, but every <IntervalSeconds> second is for illustration/debugging proposes
+                _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(IntervalSeconds));
             }
             catch (Exception ex)
             {

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OnionDlx.SolPwr.BusinessLogic;
+using OnionDlx.SolPwr.BusinessObjects;
 using OnionDlx.SolPwr.Dto;
 using OnionDlx.SolPwr.Persistence;
 using OnionDlx.SolPwr.Services;
@@ -13,8 +14,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace OnionDlx.SolPwr.Configuration
-{  
-    public static class ServicesDomainExtensions
+{
+    public static class ServicesOrmExtensions
     {
         /// <summary>
         /// Will add the needed boilerplate to IoC, without the need to introduce a dependency to EF in the main app
@@ -23,18 +24,51 @@ namespace OnionDlx.SolPwr.Configuration
         /// <returns></returns>
         public static IServiceCollection AddPersistence(this IServiceCollection coll, string connString)
         {
-            coll.AddDbContext<UtilitiesContext>(options => options.UseSqlServer(connString));
+            // As originating from a static method, this is what we need to do
+            Extensions.RequestConvert += Extensions_RequestConvert;
 
-            // This is the connection point between the external communication layer and the domain layer
-            var glue = new MeteoLookupServiceCallback();            
-            coll.AddSingleton<IMeteoLookupServiceCallback>(provider => glue);
-            coll.AddScoped<IPlantManagementService>(provider =>
+            coll.AddDbContext<UtilitiesContext>(options => options.UseSqlServer(connString));
+            coll.AddScoped<IUtilitiesRepositoryFactory>(provider =>
             {
-                var logger = provider.GetRequiredService<ILogger<IPlantManagementService>>();
-                return new PlantManagementService(connString, logger, glue);
+                var logger = provider.GetRequiredService<ILogger<IUtilitiesRepositoryFactory>>();
+                return new UtilitiesRepositoryFactory(connString, logger);
             });
 
             return coll;
         }
+
+
+        private static void Extensions_RequestConvert(object sender, ConverterEventArgs e)
+        {
+            if (e != null)
+            {
+                // Trick
+                e.Converter = new EntityQueryConverter();
+            }
+        }
+
+
+        class EntityQueryConverter : IConverter
+        {
+            public EntityQueryConverter()
+            {
+            }
+
+
+            public Task<List<T>> GetToListAsync<T>(IQueryable<T> coll) where T : IBusinessObject
+            {
+                return EntityFrameworkQueryableExtensions.ToListAsync(coll);
+            }
+
+
+            public Task<T> GetFirstOrDefaultAsync<T>(IQueryable<T> coll) where T : IBusinessObject
+            {
+                // EF is not reachable from the pure domain layer
+                return EntityFrameworkQueryableExtensions.FirstOrDefaultAsync(coll);
+            }
+        }
     }
+
+
+
 }
