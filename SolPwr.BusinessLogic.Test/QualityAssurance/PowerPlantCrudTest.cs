@@ -4,84 +4,91 @@ using OnionDlx.SolPwr.BusinessLogic;
 using OnionDlx.SolPwr.BusinessObjects;
 using OnionDlx.SolPwr.Data;
 using OnionDlx.SolPwr.Services;
+using System.Collections;
 using System.Linq.Expressions;
 
 namespace OnionDlx.SolPwr.QualityAssurance
 {
     public class CrudTests
     {
-        // private Mock<ILogger<IPlantManagementService>> _loggerMock;
-        // private Mock<IUtilitiesRepository> _utilitiesRepositoryMock;
-        // private Mock<IUtilitiesRepositoryFactory> _utilitiesRepositoryFactoryMock;
-        //// private Mock<IMeteoLookupServiceCallback> _meteoLookupServiceCallbackMock;
-        // private PlantManagementService _plantManagementService;
+        #region Boilerplate
 
-
-        private Mock<IUtilitiesRepositoryFactory> _repoFactoryMock;
-        private Mock<IUtilitiesRepository> _repoMock;
+        private Mock<IMeteoLookupService> _endpointMock;
         private Mock<ILogger<IPlantManagementService>> _loggerMock;
         private Mock<IMeteoLookupServiceCallback> _meteoCallbackMock;
-        private PlantManagementService _plantManagementService;
 
 
         [SetUp]
         public void Setup()
         {
+            // Trivial parts are always the same here
             _loggerMock = new Mock<ILogger<IPlantManagementService>>();
-            _repoFactoryMock = new Mock<IUtilitiesRepositoryFactory>();
+            _endpointMock = new Mock<IMeteoLookupService>();
             _meteoCallbackMock = new Mock<IMeteoLookupServiceCallback>();
-            _repoMock = new Mock<IUtilitiesRepository>();
-
-            var powerPlantsMock = new Mock<IBusinessObjectCollection<PowerPlant>>();
-            powerPlantsMock.Setup(plants => plants.FirstOrDefaultAsync()).ReturnsAsync((PowerPlant)null);
-            powerPlantsMock.Setup(plants => plants.FirstOrDefaultAsync(It.IsAny<Expression<Func<PowerPlant, bool>>>())).ReturnsAsync((PowerPlant)null);
-
-            _repoMock.Setup(repo => repo.PowerPlants).Returns(powerPlantsMock.Object);
-
-            _plantManagementService = new PlantManagementService(_repoFactoryMock.Object, _loggerMock.Object, _meteoCallbackMock.Object);
-
-
-            _repoFactoryMock = new Mock<IUtilitiesRepositoryFactory>();
-            _repoMock = new Mock<IUtilitiesRepository>();
-            _loggerMock = new Mock<ILogger<IPlantManagementService>>();
-            _meteoCallbackMock = new Mock<IMeteoLookupServiceCallback>();
-
-            _repoFactoryMock.Setup(factory => factory.NewQuery()).Returns(_repoMock.Object);
-
-            _plantManagementService = new PlantManagementService(_repoFactoryMock.Object, _loggerMock.Object, _meteoCallbackMock.Object);
+            _meteoCallbackMock.Setup(ep => ep.GetEndpoint()).Returns(_endpointMock.Object);
         }
 
+
+        private PlantManagementService CreateInstanceWithData(IList<PowerPlant> source)
+        {
+            // EF part
+            var repoFactoryMock = new Mock<IUtilitiesRepositoryFactory>();
+            var repoMock = new Mock<IUtilitiesRepository>();
+            repoFactoryMock.Setup(mock => mock.NewCommand()).Returns(repoMock.Object);
+            repoFactoryMock.Setup(mock => mock.NewQuery()).Returns(repoMock.Object);
+
+            var powerPlantCollectionMock = new Mock<IBusinessObjectCollection<PowerPlant>>().WithAsyncData(source);
+            repoMock.Setup(repo => repo.PowerPlants).Returns(powerPlantCollectionMock.Object);
+
+            // Service ready to be used
+            return new PlantManagementService(repoFactoryMock.Object, _loggerMock.Object, _meteoCallbackMock.Object);
+        }
+
+        #endregion
 
         [Test]
-        public async Task BlankRepo_CreatePlant_Success()
+        public async Task PrePopulated_SelectAll_Success()
         {
             // Arrange
-            //_utilitiesRepositoryFactoryMock.Setup(repo => repo.GetAllPlantsAsync()).ReturnsAsync(new List<PowerPlantImmutable>());
-            _repoFactoryMock.Setup(repo => repo.NewQuery()).Returns(_repoMock.Object);
-            _repoFactoryMock.Setup(repo => repo.NewCommand()).Returns(_repoMock.Object);
-
-
-
-            // Arrange
-            var powerPlants = new List<PowerPlant>
+            var source = new List<PowerPlant>
             {
-                new PowerPlant { Id = Guid.NewGuid(), PlantName = "Plant1", UtcInstallDate = DateTime.UtcNow, Location = new GeoCoordinate(0, 0), PowerCapacity = 100 },
-                new PowerPlant { Id = Guid.NewGuid(), PlantName = "Plant2", UtcInstallDate = DateTime.UtcNow, Location = new GeoCoordinate(0, 0), PowerCapacity = 200 }
+                new PowerPlant
+                {
+                    Id = Guid.NewGuid(),
+                    PlantName = "Three Mile island",
+                    UtcInstallDate = DateTime.UtcNow,
+                    Location = new GeoCoordinate(5, 10),
+                    PowerCapacity = 100
+                },
+                new PowerPlant
+                {
+                    Id = Guid.NewGuid(),
+                    PlantName = "福島第",
+                    UtcInstallDate = DateTime.UtcNow,
+                    Location = new GeoCoordinate(10, 20),
+                    PowerCapacity = 200
+                },
+                new PowerPlant
+                {
+                    Id = Guid.NewGuid(),
+                    PlantName = "Чорнобиль",
+                    UtcInstallDate = DateTime.UtcNow,
+                    Location = new GeoCoordinate(20, 30),
+                    PowerCapacity = 300
+                }
             };
 
-            var powerPlantCollectionMock = new Mock<IBusinessObjectCollection<PowerPlant>>();
-            powerPlantCollectionMock.Setup(p => p.GetEnumerator()).Returns(powerPlants.GetEnumerator());
-
-            _repoMock.Setup(repo => repo.PowerPlants).Returns(powerPlantCollectionMock.Object);
-
-
+            // This is the real service, but with mocked surroundings
+            var testee = CreateInstanceWithData(source);
 
             // Act
-            var result = await _plantManagementService.GetAllPlantsAsync();
+            var result = await testee.GetAllPlantsAsync();
 
             // Assert
-            //Assert.That().IsNotNull(result);
-            //Assert.IsEmpty(result);
+            Assert.That(result.Count, Is.EqualTo(source.Count));
+            //_loggerMock.VerifyFor("OK");
         }
+
+
     }
 }
