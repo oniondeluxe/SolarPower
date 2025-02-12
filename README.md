@@ -110,7 +110,7 @@ Fill in the body according to this example:
 }
 ```
 
-### Power queries
+### Power output queries
 > [!NOTE]
 > All power queries must be authorized with a JWT bearer token in the header.
 
@@ -172,8 +172,7 @@ UnitOfWork<T, D>
 ```  
 Has logging implemented as an aspect.  
 
-There is also a LinkedIn post to read, about this:  
-https://www.linkedin.com/posts/daniel-z-07868a24_javascript-programming-nodejs-activity-6898956619485462528-Z7xs?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAUVU9wBYfpttxgf_cVWjWKGLlje3SE6dAw
+There is also a LinkedIn [LinkedIn](https://www.linkedin.com/posts/daniel-z-07868a24_javascript-programming-nodejs-activity-6898956619485462528-Z7xs?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAUVU9wBYfpttxgf_cVWjWKGLlje3SE6dAw) post to read, about logging in general.  
 
 
 ## Taxonomy
@@ -184,9 +183,11 @@ Namespaces are all originated from the templated file `Directory.Build.props`, r
 
 Please note that namespaces are in general orthogonal to the names of the projects and their physical names in the file system.
 
-An example: The namespace
+An example: The namespace  
 
-`OnionDlx.SolPwr.BusinessObjects`
+```
+namespace OnionDlx.SolPwr.BusinessObjects
+```  
 
 is used in both the projects `SolPwr.DomainModel` and `SolPwr.DomainModel.Orm` 
 
