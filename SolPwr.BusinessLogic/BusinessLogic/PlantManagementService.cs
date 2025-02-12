@@ -57,6 +57,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
             },
             (dto) =>
             {
+                // The payload will carry the newly created ID
                 dto.Id = newId;
             });
 
@@ -136,7 +137,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
                 foreach (var plant in plants)
                 {
                     var mdList = new List<Dto.MeteoData>();
-                    // Zero values means now
+                    // Zero values means right now
                     var data = await meteo.GetMeteoDataAsync(plant.Location, TimeResolution.None, TimeSpanCode.None, 0);
                     mdList.AddRange(data);
                     tempStorage.Add((plant.Id, mdList));

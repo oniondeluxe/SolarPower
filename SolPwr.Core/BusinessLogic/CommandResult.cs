@@ -52,7 +52,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
         {
             get
             {
-                return _commit; // Payload.TransactionId.HasValue;
+                return _commit;
             }
         }
 

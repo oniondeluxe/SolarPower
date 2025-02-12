@@ -17,6 +17,10 @@ namespace OnionDlx.SolPwr.BusinessObjects
     public class ConverterEventArgs : EventArgs
     {
         public IConverter Converter { get; set; }
+
+        internal ConverterEventArgs()
+        {
+        }
     }
 
 
@@ -24,8 +28,17 @@ namespace OnionDlx.SolPwr.BusinessObjects
     {
         public static event EventHandler<ConverterEventArgs> RequestConvert;
 
+        /// <summary>
+        /// On this level (where we don't have a dependency to EF), there is no built-in extension method for async 
+        /// behavior, so we need to mimic that ourselves
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="coll"></param>
+        /// <returns></returns>
         public static Task<T> FirstOrDefaultAsync<T>(this IQueryable<T> coll) where T : IBusinessObject
         {
+            // Static method, so we need to apply a trick to find the layer where there is EF knowledge
+            // The one event subscription is handled when the dependency injection is configured
             if (RequestConvert != null)
             {
                 var retVal = new ConverterEventArgs();

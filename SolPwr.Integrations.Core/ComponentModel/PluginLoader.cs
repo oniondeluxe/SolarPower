@@ -28,6 +28,7 @@ namespace OnionDlx.SolPwr.ComponentModel
                 var assy = Assembly.LoadFrom(item);
                 foreach (var attrib in assy.CustomAttributes)
                 {
+                    // If the assembly has this attribute - it might be the correct plugin
                     var probe = IntegrationPluginAttribute.FromAssembly(attrib);
                     if (probe != null)
                     {

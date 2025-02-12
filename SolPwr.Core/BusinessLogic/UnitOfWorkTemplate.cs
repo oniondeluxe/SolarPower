@@ -8,20 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace OnionDlx.SolPwr.BusinessLogic
-{
-    public abstract class UnitOfWork
-    {
-        protected UnitOfWork()
-        {
-        }
-    }
-    
-
+{ 
     public class UnitOfWorkTemplate<T> where T : IBusinessObjectRepository
     {
         readonly IRepositoryFactory<T> _input;
         readonly ILogger _logger;
 
+        /// <summary>
+        /// Defines what type of Dto the client will use
+        /// </summary>
+        /// <typeparam name="D"></typeparam>
+        /// <param name="factory"></param>
+        /// <returns></returns>
         public UnitOfWork<T, D> For<D>(DtoFactory<D> factory) where D : ITransactionalDto
         {
             return new UnitOfWork<T, D>(factory, this, _input, _logger);
@@ -44,5 +42,4 @@ namespace OnionDlx.SolPwr.BusinessLogic
             return new UnitOfWorkTemplate<T>(input, logger);
         }
     }
-
 }

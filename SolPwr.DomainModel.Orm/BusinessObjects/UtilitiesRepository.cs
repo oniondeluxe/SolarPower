@@ -60,21 +60,15 @@ namespace OnionDlx.SolPwr.BusinessObjects
         }
 
 
-        public override Guid? SaveChanges()
+        protected override void ExecuteSaveChanges()
         {
             _dbContext.SaveChanges();
-            FlushLogMessages();
-
-            return GetTransactionID();
         }
 
 
-        public override async Task<Guid?> SaveChangesAsync()
+        protected override async Task ExecuteSaveChangesAsync()
         {
             await _dbContext.SaveChangesAsync();
-            FlushLogMessages();
-
-            return GetTransactionID();
         }
 
 
@@ -126,7 +120,7 @@ namespace OnionDlx.SolPwr.BusinessObjects
 
     internal class ImmutableUtilitiesRepository : UtilitiesRepository
     {
-        public override Guid? SaveChanges()
+        protected override void ExecuteSaveChanges()
         {
             throw new NotSupportedException("Collection is read-only");
         }
@@ -134,7 +128,7 @@ namespace OnionDlx.SolPwr.BusinessObjects
         public override bool IsReadonly => true;
 
 
-        public override Task<Guid?> SaveChangesAsync()
+        protected override Task ExecuteSaveChangesAsync()
         {
             throw new NotSupportedException("Collection is read-only");
         }

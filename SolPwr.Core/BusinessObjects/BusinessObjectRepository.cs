@@ -6,8 +6,15 @@ using System.Threading.Tasks;
 
 namespace OnionDlx.SolPwr.BusinessObjects
 {
+    /// <summary>
+    /// Abstract base class for implementation of the repo, representing a transparent wrapper around an Orm context
+    /// This abstract class has no dependencies to any specific Orm, like EntityFramework
+    /// </summary>
     public abstract class BusinessObjectRepository : IBusinessObjectRepository
     {
+        Guid? _pendingTransactionId;
+        readonly List<string> _pendingLogMessages;
+
         #region IDisposable
 
         protected bool disposed = false;
@@ -36,9 +43,6 @@ namespace OnionDlx.SolPwr.BusinessObjects
 
         #endregion
 
-        Guid? _pendingTransactionId;
-        readonly List<string> _pendingLogMessages;
-
         protected BusinessObjectRepository()
         {
             _pendingLogMessages = new List<string>();
@@ -64,6 +68,7 @@ namespace OnionDlx.SolPwr.BusinessObjects
 
         public void AddPendingLogMessage(string message)
         {
+            // We don't want to emit logs for CRUD operations until the save operation is completed
             if (!string.IsNullOrEmpty(message))
             {
                 _pendingLogMessages.Add(message);
@@ -76,17 +81,50 @@ namespace OnionDlx.SolPwr.BusinessObjects
         }
 
 
-        protected void FlushLogMessages()
+        private void FlushLogMessages()
         {
-            foreach (var message in _pendingLogMessages)
+            try
             {
-                WriteLogMessage(message);
+                foreach (var message in _pendingLogMessages)
+                {
+                    WriteLogMessage(message);
+                }
+            }
+            finally
+            {
+                // Clearing regardless
+                _pendingLogMessages.Clear();
             }
         }
 
+        protected abstract void ExecuteSaveChanges();
 
-        public abstract Guid? SaveChanges();
+        protected abstract Task ExecuteSaveChangesAsync();
 
-        public abstract Task<Guid?> SaveChangesAsync();
+
+        public Guid? SaveChanges()
+        {
+            ExecuteSaveChanges();
+            FlushLogMessages();
+
+            // Save away and then clear
+            var trx = GetTransactionID();
+            _pendingTransactionId = null;
+
+            return trx;
+        }
+
+
+        public async Task<Guid?> SaveChangesAsync()
+        {
+            await ExecuteSaveChangesAsync();
+            FlushLogMessages();
+
+            // Save away and then clear
+            var trx = GetTransactionID();
+            _pendingTransactionId = null;
+
+            return trx;
+        }
     }
 }
