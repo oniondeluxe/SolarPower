@@ -8,6 +8,12 @@ namespace OnionDlx.SolPwr.Dto
 {
     public interface ITransactionalDto : IDataTransferObject
     {
-        Guid? TransactionId { get; }
+        Guid? TransactionId { get; set; }
+
+        string Message { get; set;  }
+
+        bool Success { get; set; }
+
+        IEnumerable<(string, string)> ErrorInfo { get; set; }
     }
 }

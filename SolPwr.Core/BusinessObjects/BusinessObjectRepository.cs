@@ -37,6 +37,13 @@ namespace OnionDlx.SolPwr.BusinessObjects
         #endregion
 
         Guid? _pendingTransactionId;
+        readonly List<string> _pendingLogMessages;
+
+        protected BusinessObjectRepository()
+        {
+            _pendingLogMessages = new List<string>();
+        }
+
 
         public void SetDirty(object invoker)
         {
@@ -46,8 +53,10 @@ namespace OnionDlx.SolPwr.BusinessObjects
             }
         }
 
+        public abstract bool IsReadonly { get; }
 
-        protected virtual Guid? GetTransactionID()
+
+        protected Guid? GetTransactionID()
         {
             return _pendingTransactionId;
         }
@@ -55,12 +64,24 @@ namespace OnionDlx.SolPwr.BusinessObjects
 
         public void AddPendingLogMessage(string message)
         {
+            if (!string.IsNullOrEmpty(message))
+            {
+                _pendingLogMessages.Add(message);
+            }
+        }
 
+
+        protected virtual void WriteLogMessage(string message)
+        {
         }
 
 
         protected void FlushLogMessages()
         {
+            foreach (var message in _pendingLogMessages)
+            {
+                WriteLogMessage(message);
+            }
         }
 
 

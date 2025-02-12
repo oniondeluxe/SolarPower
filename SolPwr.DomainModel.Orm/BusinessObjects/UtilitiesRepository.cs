@@ -38,7 +38,6 @@ namespace OnionDlx.SolPwr.BusinessObjects
     }
 
 
-
     internal abstract class UtilitiesRepository : BusinessObjectRepository, IUtilitiesRepository
     {
         #region Bolierplate
@@ -52,6 +51,12 @@ namespace OnionDlx.SolPwr.BusinessObjects
             _creator = creator;
             _dbContext = dbContext;
             _logger = logger;
+        }
+
+
+        protected override void WriteLogMessage(string message)
+        {
+            _logger.LogInformation(message);
         }
 
 
@@ -123,13 +128,15 @@ namespace OnionDlx.SolPwr.BusinessObjects
     {
         public override Guid? SaveChanges()
         {
-            throw new NotSupportedException("Instance is read-only");
+            throw new NotSupportedException("Collection is read-only");
         }
+
+        public override bool IsReadonly => true;
 
 
         public override Task<Guid?> SaveChangesAsync()
         {
-            throw new NotSupportedException("Instance is read-only");
+            throw new NotSupportedException("Collection is read-only");
         }
 
 
@@ -142,6 +149,8 @@ namespace OnionDlx.SolPwr.BusinessObjects
 
     internal class MutableUtilitiesRepository : UtilitiesRepository
     {
+        public override bool IsReadonly => false;
+
         public MutableUtilitiesRepository(UtilitiesRepositoryFactory creator, UtilitiesContext dbContext, ILogger<IUtilitiesRepositoryFactory> logger)
             : base(creator, dbContext, logger)
         {

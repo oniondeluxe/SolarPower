@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Numerics;
 using System.Security.Principal;
 using System.Text;
@@ -63,49 +64,6 @@ namespace OnionDlx.SolPwr.BusinessLogic
             await _meteoCallback.GetEndpoint()?.StartFeedAsync(resultDto.Id.Value, dtoRegister.Location);
 
             return resultDto;
-
-
-            using (var repo = Database.NewCommand())
-            {
-                var plant = new PowerPlant
-                {
-                    Id = Guid.NewGuid(),
-                    UtcInstallDate = dtoRegister.UtcInstallDate,
-                    PlantName = dtoRegister.PlantName,
-                    PowerCapacity = dtoRegister.PowerCapacity,
-                    Location = dtoRegister.Location
-                };
-
-                repo.PowerPlants.Add(plant);
-                var trx = await repo.SaveChangesAsync();
-
-                return Dto.PlantMgmtResponse.CreateSuccess("OK", trx).WithId(plant.Id);
-            }
-
-
-
-            //// Bump the database
-            //var plantDto = await _uow.ExecuteCommandAsync(context =>
-            //{
-            //    var plant = new BusinessObjects.PowerPlant
-            //    {
-            //        Id = Guid.NewGuid(),
-            //        UtcInstallDate = dtoRegister.UtcInstallDate,
-            //        PlantName = dtoRegister.PlantName,
-            //        PowerCapacity = dtoRegister.PowerCapacity,
-            //        Location = dtoRegister.Location
-            //    };
-
-            //    context.PowerPlants.Add(plant);
-            //    return CommandResult.Create(PlantMgmtResponse.CreateSuccess("OK", Guid.NewGuid()).WithId(plantDto.Id), true);
-            //});
-
-            //// Make sure we start feeding power data in the worker thread
-            //await _meteoCallback.GetEndpoint()?.StartFeedAsync(plantDto.Id.Value, dtoRegister.Location);
-
-            //return plantId;
-
-            // return null; // Task.FromResult<Dto.PlantMgmtResponse>(null);
         }
 
 
@@ -128,26 +86,6 @@ namespace OnionDlx.SolPwr.BusinessLogic
 
                 return cmd.AsSuccessful(true);
             });
-
-
-            //return await _uow.ExecuteCommandAsync(context =>
-            //{
-            //    var target = from plant in context.PowerPlants where plant.Id == identity select plant;
-            //    if (!target.Any())
-            //    {
-            //        // From an API perspective, this is a success (idempotent operation)
-            //        return CommandResult.Create(PlantMgmtResponse.CreateSuccess("Plant not found"));
-            //    }
-
-            //    var modify = target.First();
-            //    modify.UtcInstallDate = dtoRegister.UtcInstallDate;
-            //    modify.PlantName = dtoRegister.PlantName;
-            //    modify.PowerCapacity = dtoRegister.PowerCapacity;
-            //    modify.Location = dtoRegister.Location;
-
-            //    return CommandResult.Create(PlantMgmtResponse.CreateSuccess(identity.ToString(), Guid.NewGuid()), true);
-            //});
-
         }
 
 
@@ -169,23 +107,6 @@ namespace OnionDlx.SolPwr.BusinessLogic
 
                 return cmd.AsSuccessful(true);
             });
-
-            //return await _uow.ExecuteCommandAsync(context =>
-            //{
-            //    var target = from plant in context.PowerPlants where plant.Id == identity select plant;
-            //    if (!target.Any())
-            //    {
-            //        // From an API perspective, this is a success (idempotent operation)
-            //        return CommandResult.Create(PlantMgmtResponse.CreateSuccess("Plant not found"));
-            //    }
-
-            //    var modify = target.First();
-            //    var history = from rec in context.GenerationHistory where rec.PowerPlant.Id == identity select rec;
-            //    context.GenerationHistory.RemoveRange(history);
-            //    context.PowerPlants.Remove(modify);
-
-            //    return CommandResult.Create(PlantMgmtResponse.CreateSuccess(identity.ToString(), Guid.NewGuid()), true);
-            //});
         }
 
 
@@ -200,24 +121,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
                 }
             }
 
-            //return _uow.ExecuteQueryAsync<PowerPlantImmutable>(async context =>
-            //{
-            //    var result = new List<PowerPlantImmutable>();
-            //    await foreach (var dbRecord in context.PowerPlants)
-            //    {
-            //        result.Add(new PowerPlantImmutable
-            //        {
-            //            Id = dbRecord.Id,
-            //            UtcInstallDate = dbRecord.UtcInstallDate,
-            //            PlantName = dbRecord.PlantName,
-            //            PowerCapacity = dbRecord.PowerCapacity,
-            //            Location = dbRecord.Location
-            //        });
-            //    }
-            //    return result;
-            //});
-
-            return result; // Task.FromResult<IEnumerable<PowerPlantImmutable>>(Array.Empty<PowerPlantImmutable>());
+            return result; 
         }
 
 
@@ -278,34 +182,7 @@ namespace OnionDlx.SolPwr.BusinessLogic
                 }
 
                 return cmd.AsSuccessful(counter.ToString(), true);
-            });
-
-            //return await _uow.ExecuteCommandAsync(context =>
-            //{
-            //    var counter = 0;
-            //    var now = DateTime.UtcNow;
-            //    foreach (var plant in context.PowerPlants)
-            //    {
-            //        for (int i = quartersBehind; i > 0; i--)
-            //        {
-            //            var totalMinutes = 15 * i;
-            //            var historyRec = new BusinessObjects.PowerGenerationRecord
-            //            {
-            //                Id = Guid.NewGuid(),
-            //                PowerPlant = plant,
-            //                UtcTimestamp = now.AddMinutes(-totalMinutes),
-            //                PowerGenerated = Random.Shared.Next(0, 100) * plant.PowerCapacity / 100.0
-            //            };
-
-            //            context.GenerationHistory.Add(historyRec);
-            //        }
-            //        counter++;
-            //    }
-
-            //    return CommandResult.Create(PlantMgmtResponse.CreateSuccess(counter.ToString(), Guid.NewGuid()), true);
-            //});
-
-            //return Task.FromResult<Dto.PlantMgmtResponse>(null);
+            });          
         }
 
 
@@ -396,7 +273,10 @@ namespace OnionDlx.SolPwr.BusinessLogic
 
             // Setup the connection between the Persistence contracts and our Dto contracts, 
             // with logging as an aspect
-            var dtoFactory = new DtoFactory<Dto.PlantMgmtResponse>();
+            var dtoFactory = new Dto.DtoFactory<Dto.PlantMgmtResponse>((guid) =>
+            {
+                return new Dto.PlantMgmtResponse { TransactionId = guid };
+            });
             _agent = _repoFac.CreateUow(_logger).For(dtoFactory);
 
             // Subscribe to events coming from the outer worker

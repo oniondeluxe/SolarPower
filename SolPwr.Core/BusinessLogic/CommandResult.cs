@@ -7,63 +7,62 @@ using System.Threading.Tasks;
 
 namespace OnionDlx.SolPwr.BusinessLogic
 {
-    public abstract class CommandResult
+    public class CommandResultFactory<D> where D : ITransactionalDto
     {
-        public abstract bool PendingChanges { get; }
+        readonly D _payload;
 
-        public static CommandResult<T> Create<T>(T payload) where T : ITransactionalDto
+        public CommandResult<D> AsSuccessful(bool commit = false)
         {
-            return new CommandResult<T>(payload);
+            return new CommandResult<D>(_payload, commit);
+        }
+
+
+        public CommandResult<D> AsSuccessful(string transactionMessage, bool commit = false)
+        {
+            if (_payload != null)
+            {
+                _payload.Message = transactionMessage;
+            }
+            return new CommandResult<D>(_payload, commit, transactionMessage);
+        }
+
+
+        public CommandResult<D> AsFaulted(string transactionErrorMessage)
+        {
+            // TODO
+            return null; // $"Error";
+        }
+
+
+        internal CommandResultFactory(D payload)
+        {
+            _payload = payload;
         }
     }
 
 
-    public class CommandResult<T> : CommandResult where T : ITransactionalDto
+    public class CommandResult<T> where T : ITransactionalDto
     {
+        readonly bool _commit;
+        readonly string _message;
+
         public T Payload { get; init; }
 
-        public override bool PendingChanges
+        public bool PendingChanges
         {
             get
             {
-                return Payload.TransactionId.HasValue;
+                return _commit; // Payload.TransactionId.HasValue;
             }
         }
 
-        internal CommandResult(T payload)
+
+        internal CommandResult(T payload, bool commit, string message = null) //)
         {
             Payload = payload;
+            _commit = commit;
+            _message = message;
         }
     }
 
-
-
-    public abstract class CommandResultOLD
-    {
-        public abstract bool PendingChanges { get; }
-
-        public static CommandResultOLD<T> Create<T>(T payload) where T : ITransactionalDto
-        {
-            return new CommandResultOLD<T>(payload);
-        }
-    }
-
-
-    public class CommandResultOLD<T> : CommandResultOLD where T : ITransactionalDto
-    {
-        public T Payload { get; init; }
-
-        public override bool PendingChanges
-        {
-            get
-            {
-                return Payload.TransactionId.HasValue;
-            }
-        }
-
-        internal CommandResultOLD(T payload)
-        {
-            Payload = payload;
-        }
-    }
 }

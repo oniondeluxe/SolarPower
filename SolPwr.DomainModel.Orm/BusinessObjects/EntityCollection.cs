@@ -24,6 +24,11 @@ namespace OnionDlx.SolPwr.BusinessObjects
 
         public void Add(T obj)
         {
+            if (_owner.IsReadonly)
+            {
+                throw new InvalidOperationException();
+            }
+
             _dataSet.Add(obj);
 
             // Logging will only take place when we know we are saving
@@ -34,6 +39,11 @@ namespace OnionDlx.SolPwr.BusinessObjects
 
         public void RemoveRange(IEnumerable<T> obj)
         {
+            if (_owner.IsReadonly)
+            {
+                throw new InvalidOperationException();
+            }
+
             _dataSet.RemoveRange(obj);
 
             // Logging will only take place when we know we are saving
@@ -44,6 +54,11 @@ namespace OnionDlx.SolPwr.BusinessObjects
 
         public void Remove(T obj)
         {
+            if (_owner.IsReadonly)
+            {
+                throw new InvalidOperationException();
+            }
+
             _dataSet.Remove(obj);
 
             // Logging will only take place when we know we are saving
