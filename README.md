@@ -20,13 +20,13 @@ Some paths in the local file system might have to be modified first (good to kno
 
 2 Open Visual Studio, and run the NuGet package manager console. Set the default project to `SolPwr.DomainModel.Orm`.  
 Run:  
-```
+```PowerShell
 Update-Database -context UtilitiesContext 
 ```  
 
 3 Still in the NuGet package manager console, switch the default project to `SolPwr.AuthModel`.  
 Run:  
-```
+```PowerShell
 Update-Database -context AuthIdentityContext
 ```  
 
