@@ -19,5 +19,7 @@ namespace OnionDlx.SolPwr.BusinessObjects
         T NewQuery();
 
         T NewCommand();
+
+        string ProviderInfo { get; }
     }
 }

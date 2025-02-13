@@ -23,6 +23,8 @@ namespace OnionDlx.SolPwr.BusinessObjects
 
         #endregion    
 
+        public string ProviderInfo => "EntityFrameworkCore";
+
         public IUtilitiesRepository NewCommand()
         {
             var context = new UtilitiesContext(_connectionString);

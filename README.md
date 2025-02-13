@@ -81,6 +81,7 @@ Fill in the body:
 > All CRUD operations must be authorized with a JWT bearer token in the header.
 
 To select all power plants, call this **GET**  
+
 `http://localhost:5132/api/GetAllPlants`  
 
 To create a new plant, use this **POST**  
@@ -182,11 +183,11 @@ _Please note that the_ `MeteoService` _configuration section has the value_ `ope
 
 Logging is not covered everywhere or on every level, but more like to illustrate some useful patterns.  
 
-For instance, the class  
+For instance, the [class](https://github.com/oniondeluxe/SolarPower/blob/master/SolPwr.Core/BusinessLogic/UnitOfWork.cs)  
 ```C#
 UnitOfWork<T, D>
 ```  
-Has logging implemented as an aspect.  
+has logging implemented as an aspect.  
 
 There is also a [LinkedIn](https://www.linkedin.com/posts/daniel-z-07868a24_javascript-programming-nodejs-activity-6898956619485462528-Z7xs?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAUVU9wBYfpttxgf_cVWjWKGLlje3SE6dAw) post to read, about logging in general.  
 
@@ -199,7 +200,7 @@ Namespaces are all originated from the templated file `Directory.Build.props`, r
 
 Please note that namespaces are in general orthogonal to the names of the projects and their physical names in the file system.
 
-An example: The namespace  
+An example:  
 
 ```C#
 namespace OnionDlx.SolPwr.BusinessObjects
